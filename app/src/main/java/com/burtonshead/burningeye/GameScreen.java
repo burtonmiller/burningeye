@@ -8,20 +8,15 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.burtonshead.burningeye.logic.GameListener;
 import com.burtonshead.burningeye.logic.GameLogic;
 import com.burtonshead.burningeye.logic.GameSurface;
 import com.burtonshead.burningeye.powerup.Powerup;
-
+import java.util.Vector;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 
-import java.util.Vector;
-
-
-public class GameScreen extends GameActivity
-{
+public class GameScreen extends GameActivity {
     public static GameScreen mInstance;
     private LinearLayout mControls;
     private TextView mExitButton;
@@ -38,33 +33,134 @@ public class GameScreen extends GameActivity
     private TextView mWaveResumeButton;
     private TextView mWaveText;
 
-    public GameScreen()
-    {
+    /* renamed from: com.burtonshead.burningeye.GameScreen.1 */
+    class C00131 implements GameListener {
+        C00131() {
+        }
+
+        public void onStateChange() {
+            GameScreen.this.gameStateChanged();
+        }
+
+        public void onPowerupChange() {
+            GameScreen.this.powerupsChanged();
+        }
+
+        public void onScoreChange() {
+            GameScreen.this.scoreChanged();
+        }
+    }
+
+    /* renamed from: com.burtonshead.burningeye.GameScreen.2 */
+    class C00142 implements OnClickListener {
+        C00142() {
+        }
+
+        public void onClick(View v) {
+            GameScreen.this.mGameLogic.setGameState(0);
+            GameScreen.this.mGameLogic.setGameState(1);
+        }
+    }
+
+    /* renamed from: com.burtonshead.burningeye.GameScreen.3 */
+    class C00153 implements OnClickListener {
+        C00153() {
+        }
+
+        public void onClick(View v) {
+            int gameState = GameScreen.this.mGameLogic.getGameState();
+            if (gameState == 2 || gameState == 4) {
+                GameScreen.this.mGameLogic.setGameState(1);
+                return;
+            }
+            GameScreen.this.mGameLogic.restoreGame();
+            GameScreen.this.mGameLogic.setGameState(1);
+        }
+    }
+
+    /* renamed from: com.burtonshead.burningeye.GameScreen.4 */
+    class C00164 implements OnClickListener {
+        C00164() {
+        }
+
+        public void onClick(View v) {
+            GameScreen.this.mGameLogic.setGameState(3);
+            GameScreen.this.startActivity(new Intent(GameScreen.this.getApplicationContext(), ScoreScreen.class));
+        }
+    }
+
+    /* renamed from: com.burtonshead.burningeye.GameScreen.5 */
+    class C00175 implements OnClickListener {
+        C00175() {
+        }
+
+        public void onClick(View v) {
+            GameScreen.this.mGameLogic.setGameState(2);
+        }
+    }
+
+    /* renamed from: com.burtonshead.burningeye.GameScreen.6 */
+    class C00186 implements OnClickListener {
+        C00186() {
+        }
+
+        public void onClick(View v) {
+            GameScreen.this.mGameLogic.activatePowerup(0);
+        }
+    }
+
+    /* renamed from: com.burtonshead.burningeye.GameScreen.7 */
+    class C00197 implements OnClickListener {
+        C00197() {
+        }
+
+        public void onClick(View v) {
+            GameScreen.this.mGameLogic.activatePowerup(1);
+        }
+    }
+
+    /* renamed from: com.burtonshead.burningeye.GameScreen.8 */
+    class C00208 implements OnClickListener {
+        C00208() {
+        }
+
+        public void onClick(View v) {
+            GameScreen.this.mGameLogic.activatePowerup(2);
+        }
+    }
+
+    /* renamed from: com.burtonshead.burningeye.GameScreen.9 */
+    class C00219 implements OnClickListener {
+        C00219() {
+        }
+
+        public void onClick(View v) {
+            GameScreen.this.mGameLogic.activatePowerup(3);
+        }
+    }
+
+    public GameScreen() {
         mPowerupButtons = new ImageButton[4];
         mGameListener = null;
         mGameSurface = null;
     }
 
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
         init(R.drawable.dim_bkg);
         mInstance = this;
     }
 
-    public void onStart()
-    {
+    public void onStart() {
         init();
         super.onStart();
     }
 
-    public void onPause()
-    {
+    public void onPause() {
         showBkgImage(false);
-        if (mGameLogic.getGameState() == GameLogic.STATE_RESUME)
-        {
-            mGameLogic.setGameState(GameLogic.STATE_PAUSE);
+        if (mGameLogic.getGameState() == 1) {
+            mGameLogic.setGameState(2);
         }
         mGameLogic.pauseSounds();
         App.mInstance.pauseBkgMusic();
@@ -72,8 +168,7 @@ public class GameScreen extends GameActivity
         super.onPause();
     }
 
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         showBkgImage(true);
         App.mInstance.playBkgMusic();
@@ -82,10 +177,8 @@ public class GameScreen extends GameActivity
         gameStateChanged();
     }
 
-    public void onStop()
-    {
-        if (mGameLogic.getGameState() == GameLogic.STATE_PAUSE || mGameLogic.getGameState() == GameLogic.STATE_LEVEL_COMPLETE)
-        {
+    public void onStop() {
+        if (mGameLogic.getGameState() == 2 || mGameLogic.getGameState() == 4) {
             mGameLogic.saveGame();
             mGameLogic.cleanup();
         }
@@ -95,12 +188,11 @@ public class GameScreen extends GameActivity
         super.onStop();
     }
 
-    private void init()
-    {
+    private void init() {
         mGameSurface = (GameSurface) findViewById(R.id.game_surface);
         mGameLogic = new GameLogic(this, mGameSurface);
         mGameSurface.init(this);
-        mGameListener = new BurningEyeListener();
+        mGameListener = new C00131();
         mGameLogic.addGameListener(mGameListener);
         Typeface smallFont = Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf");
         Typeface controlFont = Typeface.createFromAsset(getAssets(), "fonts/add_city_electric.ttf");
@@ -110,19 +202,19 @@ public class GameScreen extends GameActivity
         mScore.setTypeface(smallFont);
         mPlayButton = (TextView) findViewById(R.id.play_button);
         mPlayButton.setTypeface(controlFont);
-        mPlayButton.setOnClickListener(new PlayButtonListener());
+        mPlayButton.setOnClickListener(new C00142());
         mResumeButton = (TextView) findViewById(R.id.resume_button);
         mResumeButton.setTypeface(controlFont);
         mWaveResumeButton = (TextView) findViewById(R.id.wave_continue_button);
         mWaveResumeButton.setTypeface(controlFont);
-        OnClickListener resumeListener = new ResumeListener();
+        OnClickListener resumeListener = new C00153();
         mResumeButton.setOnClickListener(resumeListener);
         mWaveResumeButton.setOnClickListener(resumeListener);
         mExitButton = (TextView) findViewById(R.id.exit_button);
         mExitButton.setTypeface(controlFont);
         mWaveExitButton = (TextView) findViewById(R.id.wave_exit_button);
         mWaveExitButton.setTypeface(controlFont);
-        OnClickListener exitListener = new EndGameListener();
+        OnClickListener exitListener = new C00164();
         mExitButton.setOnClickListener(exitListener);
         mWaveExitButton.setOnClickListener(exitListener);
         findViewById(R.id.inner_view).setOnClickListener(new C00175());
@@ -137,14 +229,12 @@ public class GameScreen extends GameActivity
         mPowerupButtons[2].setOnClickListener(new C00208());
         mPowerupButtons[3] = (ImageButton) findViewById(R.id.powerup_button_4);
         mPowerupButtons[3].setOnClickListener(new C00219());
-        mGameLogic.setGameState(GameLogic.STATE_UNINIT);
+        mGameLogic.setGameState(-1);
     }
 
-    private void gameStateChanged()
-    {
-        switch (mGameLogic.getGameState())
-        {
-            case GameLogic.STATE_RESUME:
+    private void gameStateChanged() {
+        switch (mGameLogic.getGameState()) {
+            case FastDateFormat.LONG /*1*/:
                 showBkgImage(false);
                 App.mInstance.pauseBkgMusic();
                 mGameSurface.setVisibility(0);
@@ -152,7 +242,7 @@ public class GameScreen extends GameActivity
                 mLevelControls.setVisibility(8);
                 showPowerups(true);
                 break;
-            case GameLogic.STATE_PAUSE:
+            case FastDateFormat.MEDIUM /*2*/:
                 App.mInstance.playBkgMusic();
                 mControls.setVisibility(0);
                 mPlayButton.setVisibility(8);
@@ -161,7 +251,7 @@ public class GameScreen extends GameActivity
                 mLevelControls.setVisibility(8);
                 showPowerups(false);
                 break;
-            case GameLogic.STATE_OVER:
+            case FastDateFormat.SHORT /*3*/:
                 App.mInstance.playBkgMusic();
                 mGameSurface.setVisibility(8);
                 mControls.setVisibility(0);
@@ -171,14 +261,13 @@ public class GameScreen extends GameActivity
                 mLevelControls.setVisibility(8);
                 showPowerups(false);
                 break;
-            case GameLogic.STATE_LEVEL_COMPLETE:
-                if (App.getProps().getGameType() != 0 && mGameLogic.getWaveCount() >= 15)
-                {
+            case DateUtils.RANGE_WEEK_CENTER /*4*/:
+                if (App.getProps().getGameType() != 0 && mGameLogic.getWaveCount() >= 15) {
                     startActivity(new Intent(this, UpgradeScreen.class));
                     finish();
                     break;
                 }
-                App.mInstance.playBkgMusic();
+                App.mInstance.pauseBkgMusic();
                 mControls.setVisibility(8);
                 mLevelControls.setVisibility(0);
                 mWaveText.setText("Wave " + mGameLogic.getWaveCount() + " Complete");
@@ -197,175 +286,27 @@ public class GameScreen extends GameActivity
         scoreChanged();
     }
 
-    private void showPowerups(boolean s)
-    {
-        if (s)
-        {
+    private void showPowerups(boolean s) {
+        if (s) {
             powerupsChanged();
         }
         mPowerupPanel.setVisibility(s ? 0 : 8);
     }
 
-    private void powerupsChanged()
-    {
+    private void powerupsChanged() {
         Vector<Powerup> powerups = mGameLogic.getPowerups();
         int size = powerups.size();
-        for (int i = 0; i < 4; i++)
-        {
-            if (i >= size)
-            {
+        for (int i = 0; i < 4; i++) {
+            if (i >= size) {
                 mPowerupButtons[i].setVisibility(8);
-            } else
-            {
+            } else {
                 mPowerupButtons[i].setBackgroundDrawable(getResources().getDrawable(((Powerup) powerups.get(i)).getDrawableID()));
                 mPowerupButtons[i].setVisibility(0);
             }
         }
     }
 
-    private void scoreChanged()
-    {
+    private void scoreChanged() {
         mScore.setText("" + GameLogic.mInstance.getScore());
-    }
-
-    /* renamed from: com.burtonshead.burningeye.GameScreen.1 */
-    class BurningEyeListener implements GameListener
-    {
-        BurningEyeListener()
-        {
-        }
-
-        public void onStateChange()
-        {
-            GameScreen.this.gameStateChanged();
-        }
-
-        public void onPowerupChange()
-        {
-            GameScreen.this.powerupsChanged();
-        }
-
-        public void onScoreChange()
-        {
-            GameScreen.this.scoreChanged();
-        }
-    }
-
-    /* renamed from: com.burtonshead.burningeye.GameScreen.2 */
-    class PlayButtonListener implements OnClickListener
-    {
-        PlayButtonListener()
-        {
-        }
-
-        public void onClick(View v)
-        {
-            GameScreen.this.mGameLogic.setGameState(GameLogic.STATE_NEW );
-            GameScreen.this.mGameLogic.setGameState(GameLogic.STATE_RESUME);
-        }
-    }
-
-    /* renamed from: com.burtonshead.burningeye.GameScreen.3 */
-    class ResumeListener implements OnClickListener
-    {
-        ResumeListener()
-        {
-        }
-
-        public void onClick(View v)
-        {
-            int gameState = GameScreen.this.mGameLogic.getGameState();
-            if (gameState == GameLogic.STATE_PAUSE || gameState == GameLogic.STATE_LEVEL_COMPLETE)
-            {
-                GameScreen.this.mGameLogic.setGameState(GameLogic.STATE_RESUME);
-                return;
-            }
-            GameScreen.this.mGameLogic.restoreGame();
-            GameScreen.this.mGameLogic.setGameState(GameLogic.STATE_RESUME);
-        }
-    }
-
-    /* renamed from: com.burtonshead.burningeye.GameScreen.4 */
-    class EndGameListener implements OnClickListener
-    {
-        EndGameListener()
-        {
-        }
-
-        public void onClick(View v)
-        {
-            mGameLogic.setGameState(GameLogic.STATE_OVER);
-            startActivity(new Intent(GameScreen.this.getApplicationContext(), ScoreScreen.class));
-        }
-    }
-
-    /* renamed from: com.burtonshead.burningeye.GameScreen.5 */
-    class C00175 implements OnClickListener
-    {
-        C00175()
-        {
-        }
-
-        public void onClick(View v)
-        {
-            if (mGameLogic.getGameState() == GameLogic.STATE_LEVEL_COMPLETE)
-            {
-                return;
-            }
-
-            GameScreen.this.mGameLogic.setGameState(GameLogic.STATE_PAUSE);
-        }
-    }
-
-    /* renamed from: com.burtonshead.burningeye.GameScreen.6 */
-    class C00186 implements OnClickListener
-    {
-        C00186()
-        {
-        }
-
-        public void onClick(View v)
-        {
-            GameScreen.this.mGameLogic.activatePowerup(0);
-        }
-    }
-
-    /* renamed from: com.burtonshead.burningeye.GameScreen.7 */
-    class C00197 implements OnClickListener
-    {
-        C00197()
-        {
-        }
-
-        public void onClick(View v)
-        {
-            GameScreen.this.mGameLogic.activatePowerup(1);
-        }
-    }
-
-    /* renamed from: com.burtonshead.burningeye.GameScreen.8 */
-    class C00208 implements OnClickListener
-    {
-        C00208()
-        {
-        }
-
-        public void onClick(View v)
-        {
-            GameScreen.this.mGameLogic.activatePowerup(2);
-        }
-    }
-
-    /* renamed from: com.burtonshead.burningeye.GameScreen.9 */
-    class C00219 implements OnClickListener
-    {
-        C00219()
-        {
-        }
-
-        public void onClick(View v)
-        {
-            GameScreen.this.mGameLogic.activatePowerup(3);
-        }
     }
 }

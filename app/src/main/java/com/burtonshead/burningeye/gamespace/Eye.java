@@ -102,7 +102,7 @@ public class Eye {
     public Bitmap getEyeBitmap() {
         float step = SPEED_FAST * GameLogic.mStepMult;
         this.mEyeBitmapIndex = (this.mEyeBitmapIndex + step) % 4.0f;
-        Log.i("getEyeBitmap", "*** " + step + " ****");
+        //Log.i("getEyeBitmap", "*** " + step + " ****");
         return this.mEyeBitmaps[(int) this.mEyeBitmapIndex];
     }
 
