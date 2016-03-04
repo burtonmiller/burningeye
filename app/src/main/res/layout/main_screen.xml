@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@id/bkg_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/empty_image"/>
+
+    <TextView
+        android:id="@id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_margin="0.0dip"
+        android:gravity="center_horizontal"
+        android:padding="20.0dip"
+        android:shadowColor="@color/title"
+        android:shadowRadius="20.0"
+        android:text="BURNING EYE"
+        android:textColor="@color/title"
+        android:textSize="65.0dip"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:id="@id/main_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="90.0dip"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@id/play_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/tutorial_button"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10.0dip"
+            android:gravity="center"
+            android:shadowColor="#ff000000"
+            android:shadowRadius="6.0"
+            android:text="PLAY"
+            android:textColor="@drawable/text_button"
+            android:textSize="40.0dip"
+            android:textStyle="bold"/>
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1.0">
+
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10.0dip">
+
+                <TextView
+                    android:id="@id/story_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="15.0dip"
+                    android:gravity="left"
+                    android:shadowColor="#ff000000"
+                    android:shadowRadius="6.0"
+                    android:text="HISTORY"
+                    android:textColor="@drawable/text_button"
+                    android:textSize="30.0dip"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@id/tutorial_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="15.0dip"
+                    android:gravity="right"
+                    android:shadowColor="#ff000000"
+                    android:shadowRadius="6.0"
+                    android:text="MANUAL"
+                    android:textColor="@drawable/text_button"
+                    android:textSize="30.0dip"
+                    android:textStyle="bold"/>
+            </TableRow>
+
+            <TableRow android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@id/score_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginRight="15.0dip"
+                    android:gravity="center"
+                    android:shadowColor="#ff000000"
+                    android:shadowRadius="6.0"
+                    android:text="SCORES"
+                    android:textColor="@drawable/text_button"
+                    android:textSize="30.0dip"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@id/about_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginLeft="15.0dip"
+                    android:gravity="center"
+                    android:shadowColor="#ff000000"
+                    android:shadowRadius="6.0"
+                    android:text="ABOUT"
+                    android:textColor="@drawable/text_button"
+                    android:textSize="30.0dip"
+                    android:textStyle="bold"/>
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@id/upgrade_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5.0dip"
+            android:gravity="center_horizontal"
+            android:shadowColor="@color/upgrade"
+            android:shadowRadius="10.0"
+            android:text="UPGRADE TO FULL VERSION"
+            android:textColor="@drawable/upgrade_button"
+            android:textSize="24.0dip"
+            android:textStyle="bold"
+            android:visibility="visible"/>
+        />
+    </LinearLayout>
+</RelativeLayout>

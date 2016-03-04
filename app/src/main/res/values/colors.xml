@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="control_text">#ff8888ff</color>
+    <color name="control_text_sel">#ffeeeeff</color>
+    <color name="tutorial_text">#ff55ffb5</color>
+    <color name="story_text">#ff3dc489</color>
+    <color name="title">#ff9ad3ff</color>
+    <color name="upgrade">#ff88ff88</color>
+    <color name="upgrade_sel">#ffeeffee</color>
+</resources>

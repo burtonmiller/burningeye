@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@id/top"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@id/bkg_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@id/about_back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="8.0dip"
+        android:shadowColor="#ff000000"
+        android:shadowRadius="6.0"
+        android:text="MAIN"
+        android:textColor="@drawable/text_button"
+        android:textSize="36.0dip"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@id/design_credit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6.0dip"
+                android:shadowColor="#ff000000"
+                android:text="Design:  Burton Miller"
+                android:textColor="#ffbbbbbb"
+                android:textSize="16.0dip"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@id/code_credit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6.0dip"
+                android:shadowColor="#ff000000"
+                android:text="Code:  Burton Miller"
+                android:textColor="#ffbbbbbb"
+                android:textSize="16.0dip"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@id/graphics_credit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6.0dip"
+                android:shadowColor="#ff000000"
+                android:text="Graphics:  Burton Miller"
+                android:textColor="#ffbbbbbb"
+                android:textSize="16.0dip"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@id/sound_credit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6.0dip"
+                android:shadowColor="#ff000000"
+                android:text="Sound:  Burton Miller"
+                android:textColor="#ffbbbbbb"
+                android:textSize="16.0dip"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@id/music_credit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6.0dip"
+                android:shadowColor="#ff000000"
+                android:text="Music:  Matt McFarland"
+                android:textColor="#ffbbbbbb"
+                android:textSize="16.0dip"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@id/low_blow_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6.0dip"
+            android:shadowColor="#ff000000"
+            android:shadowRadius="6.0"
+            android:text="LOW BLOW GAMES"
+            android:textColor="#ffcd4c29"
+            android:textSize="36.0dip"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@id/low_blow_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6.0dip"
+            android:shadowColor="#ff000000"
+            android:shadowRadius="6.0"
+            android:text="http://www.burtonshead.com"
+            android:textColor="#ffffffff"
+            android:textSize="18.0dip"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</RelativeLayout>

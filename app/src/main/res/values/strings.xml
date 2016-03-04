@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Burning Eye</string>
+    <string name="game_type">full</string>
+    <string name="adwhirl_id">425b8dd09a274c57a6acd86656e07af8</string>
+    <string name="base_level">{interval:3,saucers:8,limit:3,saucer_index:0,saucer_chance:[100,0,0,0,0,0,0,0], game_zone:1, game_wave:1, game_pass:1, wave_count:1, score:0, base_speed:1.0}</string>
+    <string name="map_1">{map_id:1, cities:[[80,80],[120,160],[80,240],[160,200],[160,280],[210,80],[320,20],[360,260],[380,80],[400,160]]}</string>
+    <string name="map_2">{map_id:2, cities:[[85,120],[100,25],[120,180],[160,280],[170,80],[250,35],[250,235],[320,100],[350,250],[420,130]]}</string>
+    <string name="map_3">{map_id:3, cities:[[20,50],[40,150],[90,220],[150,125],[190,25],[260,280],[310,70],[385,215],[400,30],[440,150]]}</string>
+    <string name="map_4">{map_id:4, cities:[[20,80],[20,225],[100,25],[150,120],[160,250],[250,25],[330,185],[360,285],[370,50],[440,150]]}</string>
+    <string name="map_5">{map_id:5, cities:[[50,80],[100,20],[120,150],[200,35],[220,265],[300,40],[330,115],[350,215],[330,305],[430,80]]}</string>
+    <string name="map_6">{map_id:6, cities:[[50,150],[70,260],[140,175],[150,70],[225,25],[270,250],[340,40],[380,300],[410,135],[430,235]]}</string>
+    <string name="map_7">{map_id:7, cities:[[80,90],[100,180],[170,250],[180,80],[230,20],[270,305],[315,100],[370,270],[370,50],[420,170]]}</string>
+    <string name="tutorial_text_1">Hold the device facing the sky, so your beam will be directed at the invaders.</string>
+    <string name="tutorial_text_2">Tilt the device side-to-side to move the beam left or right.</string>
+    <string name="tutorial_text_3">Tilt the device forward or back to move the beam up or down.</string>
+    <string name="tutorial_text_4">Touch the powerups on the right, when you need them.</string>
+    <string name="story_1">When the invasion began, humankind was woefully unprepared for the onslaught of alien destruction. The invasion fleet made no demands, and answered no hails, sending only pulsing beams of death. The saucers came in wave after wave, unstoppable by man-made technology. After the human population of Earth had been reduced to a tiny fraction of its billions...</string>
+    <string name="story_2">The technology of the ancients awoke from a slumber that had lasted untold millenia. Great swaths of earth boiled and churned at sites all over the globe. From each of these stony cauldrons emerged gargantuan, stony eyes, woven from the earth, itself. And as the eyes opened, they blasted forth a continous rain of burning energy beams that wrought havoc on the invaders.</string>
+    <string name="story_3">All that remains to be decided, is who will be victorious? Earth and her ancient, mysterious allies, or the ruthless invasion fleet...</string>
+</resources>

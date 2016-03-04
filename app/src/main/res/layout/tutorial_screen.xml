@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <Gallery
+        android:id="@id/tutorial_gallery"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+    <TextView
+        android:id="@id/tutorial_back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="8.0dip"
+        android:shadowColor="#ff000000"
+        android:shadowRadius="6.0"
+        android:text="MAIN"
+        android:textColor="@drawable/text_button"
+        android:textSize="36.0dip"
+        android:textStyle="bold"/>
+</RelativeLayout>
