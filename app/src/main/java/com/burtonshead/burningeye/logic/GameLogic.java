@@ -14,6 +14,8 @@ import android.media.SoundPool;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 
 import com.burtonshead.burningeye.App;
 import com.burtonshead.burningeye.R;
@@ -25,12 +27,12 @@ import com.burtonshead.burningeye.gamespace.GameSpace;
 import com.burtonshead.burningeye.gamespace.Saucer;
 import com.burtonshead.burningeye.powerup.Powerup;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.json.JSONObject;
 
 public class GameLogic implements SensorEventListener
 {
@@ -47,6 +49,7 @@ public class GameLogic implements SensorEventListener
     private static float mSpeedMult;
     public static float mStepMult;
     public static float mTimeDiff;
+    private final int mRotation;
     private float[] mAccValues;
     public Powerup mActivePowerup;
     private GameArchive mArchive;
@@ -343,20 +346,28 @@ public class GameLogic implements SensorEventListener
         mSpeedMult = 1.0f;
         setContext(c);
         initSound();
+
+        Display display = mContext.getWindowManager().getDefaultDisplay();
+
+        mRotation = display.getRotation();
+
         mMetrics = new DisplayMetrics();
-        this.mContext.getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+        display.getMetrics(mMetrics);
         int h = mMetrics.heightPixels;
         int w = mMetrics.widthPixels;
+
         this.mGameSurface = g;
         this.mGameSpace = new GameSpace((float) h, (float) w);
         // pause 2, resume 1
         try
         {
             this.mSensorMgr = (SensorManager) this.mContext.getSystemService("sensor");
-            Sensor aSensor = this.mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            Sensor mSensor = this.mSensorMgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-            this.mSensorMgr.registerListener(this, aSensor, Sensor.REPORTING_MODE_CONTINUOUS);
-            this.mSensorMgr.registerListener(this, mSensor, Sensor.REPORTING_MODE_CONTINUOUS);
+            Sensor accSensor = this.mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            Sensor magSensor = this.mSensorMgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            //Sensor rotationSensor = this.mSensorMgr.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            this.mSensorMgr.registerListener(this, accSensor, Sensor.REPORTING_MODE_CONTINUOUS);
+            this.mSensorMgr.registerListener(this, magSensor, Sensor.REPORTING_MODE_CONTINUOUS);
+            //this.mSensorMgr.registerListener(this, rotationSensor, Sensor.REPORTING_MODE_CONTINUOUS);
         } catch (Exception e)
         {
             Exception x = e;
@@ -368,17 +379,28 @@ public class GameLogic implements SensorEventListener
 
     private void calculateOrientation()
     {
-        Log.i("GameLogic.calculateOrientation", "\n\nENTERING\n\n");
+        try
+        {
+            SensorManager.getOrientation(this.mOrientationRotationMatrix, this.mOrientationResult);
+            SensorManager.getRotationMatrix(this.mOrientationRotationMatrix, null, this.mAccValues, this.mMagValues);
+            SensorManager.remapCoordinateSystem(this.mOrientationRotationMatrix, 0, 180, this.mOrientationTransformMatrix);
+            this.mOrientY = (float) Math.toDegrees((double) this.mOrientationResult[2]);
+            this.mOrientZ = (float) (-Math.toDegrees((double) this.mOrientationResult[0]));
+            this.mOrientX = (float) -Math.toDegrees((double) this.mOrientationResult[1]);
 
-        SensorManager.getOrientation(this.mOrientationRotationMatrix, this.mOrientationResult);
-        this.mOrientY = (float) Math.toDegrees((double) this.mOrientationResult[STATE_PAUSE]);
-        this.mOrientZ = (float) (-Math.toDegrees((double) this.mOrientationResult[STATE_NEW]));
-        SensorManager.getRotationMatrix(this.mOrientationRotationMatrix, null, this.mAccValues, this.mMagValues);
-        SensorManager.remapCoordinateSystem(this.mOrientationRotationMatrix, STATE_PAUSE, 129, this.mOrientationTransformMatrix);
-        SensorManager.getOrientation(this.mOrientationTransformMatrix, this.mOrientationResult);
-        this.mOrientX = (float) Math.toDegrees((double) this.mOrientationResult[STATE_PAUSE]);
+            if (mRotation == Surface.ROTATION_0)
+            {
+                float x = mOrientY;
+                mOrientY = -mOrientX;
+                mOrientX = x;
+            }
 
-        Log.i("GameLogic.calculateOrientation", "\n***\n***\n*** mOrientX = " + mOrientX + ", mOrientY = " + mOrientY + ", mOrientZ = " + mOrientZ + "***\n***\n***\n");
+        }
+        catch (Exception x)
+        {
+            Log.e("calcOrientation", "\n\n Problem calculating orientation \n\n", x);
+        }
+        Log.i("calculateOrientation", "*** mOrientX = " + mOrientX + ", mOrientY = " + mOrientY + ", mOrientZ = " + mOrientZ + "***");
     }
 
     public Activity getActivity()
@@ -717,6 +739,8 @@ public class GameLogic implements SensorEventListener
     {
     }
 
+    public float[] mRotationVector = new float[4];
+
     public void onSensorChanged(SensorEvent event)
     {
         final String comma = ", ";
@@ -732,12 +756,20 @@ public class GameLogic implements SensorEventListener
                 System.arraycopy(event.values, 0, this.mMagValues, 0, event.values.length);
                 //Log.i("onSensorChanged.MagneticField", event.values[STATE_NEW] + comma + event.values[STATE_RESUME] + comma + event.values[STATE_PAUSE] + ")");
             }
+//            if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR)
+//            {
+//                SensorManager.getQuaternionFromVector(mRotationVector, event.values);
+//                Log.i("Rotation Vector",
+//                        "w = " + mRotationVector[0] +
+//                                ", x = " + mRotationVector[1] +
+//                                ", y = " + mRotationVector[2] +
+//                                ", z= " + mRotationVector[3]);
+//            }
             if (this.mAccValues != null && this.mMagValues != null)
             {
                 //Log.i("onSensorChanged", "mAccValues = " + mAccValues.toString() + ", mMagValues = " + mMagValues.toString());
                 calculateOrientation();
-            }
-            else
+            } else
             {
                 if (mAccValues == null)
                 {
@@ -748,6 +780,7 @@ public class GameLogic implements SensorEventListener
                     //Log.i("GameLogic.onSensorChanged", "\n\n\n MAGNEMOMETER NULL \n\n\n");
                 }
             }
+            //Log.i("onSensorChanged", "*** mOrientX = " + mOrientX + ", mOrientY = " + mOrientY + ", mOrientZ = " + mOrientZ + "***");
         }
     }
 
