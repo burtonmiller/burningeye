@@ -37,7 +37,7 @@
                 android:shadowRadius="2.0"
                 android:text="@string/story_1"
                 android:textColor="@color/story_text"
-                android:textSize="18.0dip"
+                android:textSize="18.0sp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -54,7 +54,7 @@
                 android:shadowRadius="2.0"
                 android:text="@string/story_2"
                 android:textColor="@color/story_text"
-                android:textSize="18.0dip"
+                android:textSize="18.0sp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -71,9 +71,11 @@
                 android:shadowRadius="2.0"
                 android:text="@string/story_3"
                 android:textColor="@color/story_text"
-                android:textSize="18.0dip"
+                android:textSize="18.0sp"
                 android:textStyle="bold"/>
+
         </LinearLayout>
+
     </ScrollView>
 
     <TextView
@@ -85,6 +87,6 @@
         android:layout_margin="8.0dip"
         android:text="MAIN"
         android:textColor="@drawable/text_button"
-        android:textSize="36.0dip"
+        android:textSize="36.0sp"
         android:textStyle="bold"/>
 </RelativeLayout>

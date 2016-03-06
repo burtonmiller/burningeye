@@ -8,32 +8,30 @@
     <ImageView
         android:id="@id/tutorial_img"
         android:layout_width="wrap_content"
-        android:layout_height="200.0dip"
+        android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_weight="0.6"
+        android:layout_weight="7"
         android:gravity="center"/>
 
     <TextView
         android:id="@id/tutorial_instr"
         android:layout_width="440.0dip"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:layout_gravity="center"
-        android:layout_weight="0.3"
         android:gravity="center"
         android:lineSpacingMultiplier="1.2"
         android:maxLines="3"
-        android:text="Tutorial"
+        android:text="@string/tutorial_text_title"
         android:textColor="@color/tutorial_text"
-        android:textSize="18.0dip"
+        android:textSize="18.0sp"
         android:textStyle="bold"/>
 
     <ImageView
         android:id="@id/tutorial_progress"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_gravity="center"
-        android:layout_weight="0.1"
         android:gravity="center"/>
 </LinearLayout>

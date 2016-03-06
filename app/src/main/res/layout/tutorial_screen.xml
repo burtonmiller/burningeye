@@ -8,7 +8,8 @@
     <Gallery
         android:id="@id/tutorial_gallery"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"/>
 
     <TextView
         android:id="@id/tutorial_back_button"
@@ -21,6 +22,6 @@
         android:shadowRadius="6.0"
         android:text="MAIN"
         android:textColor="@drawable/text_button"
-        android:textSize="36.0dip"
+        android:textSize="36.0sp"
         android:textStyle="bold"/>
 </RelativeLayout>

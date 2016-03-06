@@ -2,8 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:layout_height="fill_parent">
 
     <ImageView
         android:id="@id/bkg_view"
@@ -12,29 +11,27 @@
         android:scaleType="centerCrop"
         android:src="@drawable/empty_image"/>
 
-    <TextView
-        android:id="@id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
-        android:layout_margin="0.0dip"
-        android:gravity="center_horizontal"
-        android:padding="20.0dip"
-        android:shadowColor="@color/title"
-        android:shadowRadius="20.0"
-        android:text="BURNING EYE"
-        android:textColor="@color/title"
-        android:textSize="65.0dip"
-        android:textStyle="bold"/>
-
     <LinearLayout
         android:id="@id/main_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="90.0dip"
-        android:orientation="vertical">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="0.0dip"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="100dp"
+            android:shadowColor="@color/title"
+            android:shadowRadius="20.0"
+            android:text="@string/title"
+            android:textColor="@color/title"
+            android:textSize="65.0sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@id/play_button"
@@ -48,7 +45,7 @@
             android:shadowRadius="6.0"
             android:text="PLAY"
             android:textColor="@drawable/text_button"
-            android:textSize="40.0dip"
+            android:textSize="40.0sp"
             android:textStyle="bold"/>
 
         <TableLayout
@@ -72,7 +69,7 @@
                     android:shadowRadius="6.0"
                     android:text="HISTORY"
                     android:textColor="@drawable/text_button"
-                    android:textSize="30.0dip"
+                    android:textSize="30.0sp"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -86,7 +83,7 @@
                     android:shadowRadius="6.0"
                     android:text="MANUAL"
                     android:textColor="@drawable/text_button"
-                    android:textSize="30.0dip"
+                    android:textSize="30.0sp"
                     android:textStyle="bold"/>
             </TableRow>
 
@@ -103,7 +100,7 @@
                     android:shadowRadius="6.0"
                     android:text="SCORES"
                     android:textColor="@drawable/text_button"
-                    android:textSize="30.0dip"
+                    android:textSize="30.0sp"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -111,13 +108,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:layout_marginLeft="15.0dip"
+                    android:layout_marginLeft="15.0dp"
                     android:gravity="center"
                     android:shadowColor="#ff000000"
                     android:shadowRadius="6.0"
                     android:text="ABOUT"
                     android:textColor="@drawable/text_button"
-                    android:textSize="30.0dip"
+                    android:textSize="30.0sp"
                     android:textStyle="bold"/>
             </TableRow>
         </TableLayout>
@@ -133,7 +130,7 @@
             android:shadowRadius="10.0"
             android:text="UPGRADE TO FULL VERSION"
             android:textColor="@drawable/upgrade_button"
-            android:textSize="24.0dip"
+            android:textSize="24.0sp"
             android:textStyle="bold"
             android:visibility="visible"/>
         />

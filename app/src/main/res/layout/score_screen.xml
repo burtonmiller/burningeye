@@ -23,7 +23,7 @@
         android:shadowRadius="6.0"
         android:text="MAIN"
         android:textColor="@drawable/text_button"
-        android:textSize="36.0dip"
+        android:textSize="36.0sp"
         android:textStyle="bold"/>
 
     <TableLayout
@@ -32,6 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:gravity="center"
+        android:layout_gravity="center"
         android:stretchColumns="0"/>
+
 </RelativeLayout>

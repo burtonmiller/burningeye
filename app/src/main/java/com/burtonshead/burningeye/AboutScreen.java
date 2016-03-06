@@ -38,7 +38,6 @@ public class AboutScreen extends GameActivity {
         this.mBackButton = (TextView) findViewById(R.id.about_back_button);
         this.mBackButton.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/add_city_electric.ttf"));
         this.mBackButton.setOnClickListener(new C00111());
-        ((TextView) findViewById(R.id.low_blow_logo)).setTypeface(Typeface.createFromAsset(getAssets(), "fonts/acidic.ttf"));
         Typeface smallFont = Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf");
         TextView link = (TextView) findViewById(R.id.low_blow_link);
         link.setTypeface(smallFont);

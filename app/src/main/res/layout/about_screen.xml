@@ -23,7 +23,7 @@
         android:shadowRadius="6.0"
         android:text="MAIN"
         android:textColor="@drawable/text_button"
-        android:textSize="36.0dip"
+        android:textSize="36.0sp"
         android:textStyle="bold"/>
 
     <LinearLayout
@@ -36,8 +36,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal">
 
             <TextView
                 android:id="@id/design_credit"
@@ -47,7 +47,7 @@
                 android:shadowColor="#ff000000"
                 android:text="Design:  Burton Miller"
                 android:textColor="#ffbbbbbb"
-                android:textSize="16.0dip"
+                android:textSize="24.0sp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -58,7 +58,7 @@
                 android:shadowColor="#ff000000"
                 android:text="Code:  Burton Miller"
                 android:textColor="#ffbbbbbb"
-                android:textSize="16.0dip"
+                android:textSize="24.0sp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -69,7 +69,7 @@
                 android:shadowColor="#ff000000"
                 android:text="Graphics:  Burton Miller"
                 android:textColor="#ffbbbbbb"
-                android:textSize="16.0dip"
+                android:textSize="24.0sp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -80,7 +80,7 @@
                 android:shadowColor="#ff000000"
                 android:text="Sound:  Burton Miller"
                 android:textColor="#ffbbbbbb"
-                android:textSize="16.0dip"
+                android:textSize="24.0sp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -91,22 +91,10 @@
                 android:shadowColor="#ff000000"
                 android:text="Music:  Matt McFarland"
                 android:textColor="#ffbbbbbb"
-                android:textSize="16.0dip"
+                android:textSize="24.0sp"
                 android:textStyle="bold"/>
-        </LinearLayout>
 
-        <TextView
-            android:id="@id/low_blow_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="6.0dip"
-            android:shadowColor="#ff000000"
-            android:shadowRadius="6.0"
-            android:text="LOW BLOW GAMES"
-            android:textColor="#ffcd4c29"
-            android:textSize="36.0dip"
-            android:textStyle="bold"/>
+        </LinearLayout>
 
         <TextView
             android:id="@id/low_blow_link"
@@ -118,7 +106,9 @@
             android:shadowRadius="6.0"
             android:text="http://www.burtonshead.com"
             android:textColor="#ffffffff"
-            android:textSize="18.0dip"
+            android:textSize="36.0sp"
             android:textStyle="bold"/>
+
     </LinearLayout>
+
 </RelativeLayout>
