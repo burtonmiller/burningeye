@@ -9,8 +9,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,7 +28,6 @@ import com.burtonshead.burningeye.powerup.Powerup;
 import org.apache.commons.lang.time.DateUtils;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -42,7 +39,9 @@ public class GameLogic implements SensorEventListener
     public static final int STATE_PAUSE = 2;
     public static final int STATE_RESUME = 1;
     public static final int STATE_UNINIT = -1;
+
     private static final float TICK = 33.0f;
+
     public static Eye mEye;
     public static GameLogic mInstance;
     public static DisplayMetrics mMetrics;
@@ -83,84 +82,51 @@ public class GameLogic implements SensorEventListener
     private SensorManager mSensorMgr;
     private SoundMgr mSoundMgr;
 
-    /* renamed from: com.burtonshead.burningeye.logic.GameLogic.1 */
-    class C00371 implements OnClickListener
+
+    class StateChangePoster implements Runnable
     {
-        C00371()
-        {
-        }
-
-        public void onClick(DialogInterface dialog, int which)
-        {
-            GameLogic.this.mContext.finish();
-        }
-    }
-
-    /* renamed from: com.burtonshead.burningeye.logic.GameLogic.2 */
-    class C00382 implements Runnable
-    {
-        C00382()
-        {
-        }
-
         public void run()
         {
             GameLogic.this.informStateChange();
         }
     }
 
-    /* renamed from: com.burtonshead.burningeye.logic.GameLogic.3 */
-    class C00393 implements Runnable
+    class PowerupChangePoster implements Runnable
     {
-        C00393()
-        {
-        }
-
         public void run()
         {
             GameLogic.this.informPowerupsChanged();
         }
     }
 
-    /* renamed from: com.burtonshead.burningeye.logic.GameLogic.4 */
-    class C00404 implements Runnable
+    class ScoreInformPoster implements Runnable
     {
-        C00404()
-        {
-        }
-
         public void run()
         {
             GameLogic.this.informScoreChange();
         }
     }
 
-    /* renamed from: com.burtonshead.burningeye.logic.GameLogic.5 */
-    class C00415 implements Runnable
+    class PauseGamePoster implements Runnable
     {
-        C00415()
-        {
-        }
-
         public void run()
         {
             GameLogic.this.pauseMainLoop();
         }
     }
 
-    /* renamed from: com.burtonshead.burningeye.logic.GameLogic.6 */
-    class C00426 implements Runnable
+    class ProcessScorePoster implements Runnable
     {
-        private final /* synthetic */ long val$score;
+        private final long mScore;
 
-        C00426(long j)
+        ProcessScorePoster(long j)
         {
-            this.val$score = j;
+            mScore = j;
         }
 
         public void run()
         {
-            GameLogic.this.processScore(this.val$score);
+            GameLogic.this.processScore(mScore);
         }
     }
 
@@ -206,117 +172,13 @@ public class GameLogic implements SensorEventListener
         }
     }
 
-    class SoundMgr
-    {
-        private MediaPlayer mLoopPaused;
-        private HashMap<Integer, MediaPlayer> mLoops;
-        private boolean mPaused;
-        private HashMap<Integer, Integer> mSoundMap;
-        private SoundPool mSoundPool;
-        private HashMap<Integer, Float> mSoundVol;
-
-        public SoundMgr()
-        {
-            this.mSoundMap = new HashMap();
-            this.mSoundVol = new HashMap();
-            this.mLoops = new HashMap();
-            this.mPaused = false;
-            this.mSoundPool = new SoundPool(50, GameLogic.STATE_OVER, GameLogic.STATE_NEW);
-        }
-
-        private void loadSound(int resID, float vol)
-        {
-            int id = this.mSoundPool.load(GameLogic.this.mContext, resID, GameLogic.STATE_RESUME);
-            this.mSoundMap.put(Integer.valueOf(resID), Integer.valueOf(id));
-            this.mSoundVol.put(Integer.valueOf(id), Float.valueOf(vol));
-        }
-
-        public void playSound(int resID)
-        {
-            int id = ((Integer) this.mSoundMap.get(Integer.valueOf(resID))).intValue();
-            float vol = ((Float) this.mSoundVol.get(Integer.valueOf(id))).floatValue();
-            this.mSoundPool.play(id, vol, vol, GameLogic.STATE_RESUME, GameLogic.STATE_NEW, 1.0f);
-        }
-
-        private void loadLoop(int resID, float vol)
-        {
-            MediaPlayer m = MediaPlayer.create(GameLogic.this.mContext, resID);
-            m.setLooping(true);
-            m.setVolume(vol, vol);
-            this.mLoops.put(Integer.valueOf(resID), m);
-        }
-
-        public void startLoop(int resID)
-        {
-            MediaPlayer loop = (MediaPlayer) this.mLoops.get(Integer.valueOf(resID));
-            if (this.mPaused)
-            {
-                this.mLoopPaused = loop;
-                return;
-            }
-            for (MediaPlayer m : this.mLoops.values())
-            {
-                if (!loop.equals(m) && m.isPlaying())
-                {
-                    m.pause();
-                }
-            }
-            loop.start();
-        }
-
-        public void stopLoop(int resID)
-        {
-            MediaPlayer loop = (MediaPlayer) this.mLoops.get(Integer.valueOf(resID));
-            if (this.mLoopPaused.equals(loop))
-            {
-                this.mLoopPaused = null;
-            }
-            loop.pause();
-        }
-
-        public void pauseLoops()
-        {
-            this.mPaused = true;
-            for (MediaPlayer m : this.mLoops.values())
-            {
-                if (m.isPlaying())
-                {
-                    m.pause();
-                    this.mLoopPaused = m;
-                }
-            }
-        }
-
-        public void resumeLoops()
-        {
-            this.mPaused = false;
-            if (this.mLoopPaused != null)
-            {
-                this.mLoopPaused.start();
-                this.mLoopPaused = null;
-            }
-        }
-
-        public void cleanup()
-        {
-            pauseLoops();
-            this.mSoundMap.clear();
-            this.mSoundPool.release();
-            for (MediaPlayer m : this.mLoops.values())
-            {
-                m.stop();
-                m.release();
-            }
-            this.mLoops.clear();
-            this.mPaused = false;
-            this.mLoopPaused = null;
-        }
-    }
-
     public GameLogic(Activity c, GameSurface g)
     {
+        mInstance = this;
+
+        setContext(c);
+
         this.mActivePowerup = null;
-        this.mContext = null;
         this.mMainThread = null;
         this.mOrientX = 0.0f;
         this.mOrientY = 0.0f;
@@ -338,13 +200,11 @@ public class GameLogic implements SensorEventListener
         this.mSaucerAttackChanged = false;
         this.mPowerups = new Vector();
         this.mNewPowerups = new Vector();
-        mInstance = this;
         this.mArchive = new GameArchive(c);
         this.mArchive.load();
         mTimeDiff = 0.0f;
         mStepMult = 1.0f;
         mSpeedMult = 1.0f;
-        setContext(c);
         initSound();
 
         Display display = mContext.getWindowManager().getDefaultDisplay();
@@ -368,7 +228,8 @@ public class GameLogic implements SensorEventListener
             this.mSensorMgr.registerListener(this, accSensor, Sensor.REPORTING_MODE_CONTINUOUS);
             this.mSensorMgr.registerListener(this, magSensor, Sensor.REPORTING_MODE_CONTINUOUS);
             //this.mSensorMgr.registerListener(this, rotationSensor, Sensor.REPORTING_MODE_CONTINUOUS);
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             Exception x = e;
             noSensorError();
@@ -395,12 +256,11 @@ public class GameLogic implements SensorEventListener
                 mOrientX = x;
             }
 
-        }
-        catch (Exception x)
+        } catch (Exception x)
         {
             Log.e("calcOrientation", "\n\n Problem calculating orientation \n\n", x);
         }
-        Log.i("calculateOrientation", "*** mOrientX = " + mOrientX + ", mOrientY = " + mOrientY + ", mOrientZ = " + mOrientZ + "***");
+        //Log.i("calculateOrientation", "*** mOrientX = " + mOrientX + ", mOrientY = " + mOrientY + ", mOrientZ = " + mOrientZ + "***");
     }
 
     public Activity getActivity()
@@ -509,18 +369,6 @@ public class GameLogic implements SensorEventListener
         }
     }
 
-
-    /*
-     * Enabled aggressive block sorting
-     * Enabled unnecessary exception pruning
-     * Enabled aggressive exception aggregation
-     */
-//    public static final int STATE_LEVEL_COMPLETE = 4;
-//    public static final int STATE_NEW = 0;
-//    public static final int STATE_OVER = 3;
-//    public static final int STATE_PAUSE = 2;
-//    public static final int STATE_RESUME = 1;
-//    public static final int STATE_UNINIT = -1;
     public synchronized void setGameState(int newState)
     {
 
@@ -751,20 +599,13 @@ public class GameLogic implements SensorEventListener
                 System.arraycopy(event.values, 0, this.mAccValues, 0, event.values.length);
                 //Log.i("onSensorChanged.Accelerometer", event.values[0] + comma + event.values[STATE_RESUME] + comma + event.values[STATE_PAUSE] + ")");
             }
+
             if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
             {
                 System.arraycopy(event.values, 0, this.mMagValues, 0, event.values.length);
                 //Log.i("onSensorChanged.MagneticField", event.values[STATE_NEW] + comma + event.values[STATE_RESUME] + comma + event.values[STATE_PAUSE] + ")");
             }
-//            if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR)
-//            {
-//                SensorManager.getQuaternionFromVector(mRotationVector, event.values);
-//                Log.i("Rotation Vector",
-//                        "w = " + mRotationVector[0] +
-//                                ", x = " + mRotationVector[1] +
-//                                ", y = " + mRotationVector[2] +
-//                                ", z= " + mRotationVector[3]);
-//            }
+
             if (this.mAccValues != null && this.mMagValues != null)
             {
                 //Log.i("onSensorChanged", "mAccValues = " + mAccValues.toString() + ", mMagValues = " + mMagValues.toString());
@@ -791,7 +632,7 @@ public class GameLogic implements SensorEventListener
 
     private void initSound()
     {
-        this.mSoundMgr = new SoundMgr();
+        this.mSoundMgr = new SoundMgr(mContext);
         this.mSoundMgr.loadLoop(R.raw.beam_collide_sound, 0.5f);
         this.mSoundMgr.loadLoop(R.raw.eye_sound, Eye.SPEED_FAST);
         this.mSoundMgr.loadLoop(R.raw.saucer_beam, 0.7f);
@@ -803,7 +644,18 @@ public class GameLogic implements SensorEventListener
 
     private void noSensorError()
     {
-        new Builder(this.mContext).setTitle("No Orientation Sensor").setMessage("Your device does not seem to have an orientation sensor.  This game will not function without an technology.").setNegativeButton("Quit", new C00371()).create().show();
+        new Builder(this.mContext)
+                .setTitle("No Orientation Sensor")
+                .setMessage("Your device does not seem to have an orientation sensor.  This game will not function without an technology.")
+                .setNegativeButton("Quit", new OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        GameLogic.this.mContext.finish();
+                    }
+                })
+                .create()
+                .show();
     }
 
     private void resetGame()
@@ -829,7 +681,7 @@ public class GameLogic implements SensorEventListener
             informStateChange();
         } else
         {
-            this.mHandler.post(new C00382());
+            this.mHandler.post(new StateChangePoster());
         }
     }
 
@@ -850,7 +702,7 @@ public class GameLogic implements SensorEventListener
             informPowerupsChanged();
         } else
         {
-            this.mHandler.post(new C00393());
+            this.mHandler.post(new PowerupChangePoster());
         }
     }
 
@@ -870,7 +722,7 @@ public class GameLogic implements SensorEventListener
             informScoreChange();
         } else
         {
-            this.mHandler.post(new C00404());
+            this.mHandler.post(new ScoreInformPoster());
         }
     }
 
@@ -1014,7 +866,7 @@ public class GameLogic implements SensorEventListener
             pauseMainLoop();
         } else
         {
-            this.mHandler.post(new C00415());
+            this.mHandler.post(new PauseGamePoster());
         }
     }
 
@@ -1070,7 +922,7 @@ public class GameLogic implements SensorEventListener
             processScore(score);
         } else
         {
-            this.mHandler.post(new C00426(score));
+            this.mHandler.post(new ProcessScorePoster(score));
         }
     }
 
