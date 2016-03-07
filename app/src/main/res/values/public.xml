@@ -272,7 +272,6 @@
     <public type="style" name="score_style" id="0x7f060000" />
     <public type="string" name="app_name" id="0x7f070000" />
     <public type="string" name="game_type" id="0x7f070001" />
-    <public type="string" name="adwhirl_id" id="0x7f070002" />
     <public type="string" name="base_level" id="0x7f070003" />
     <public type="string" name="map_1" id="0x7f070004" />
     <public type="string" name="map_2" id="0x7f070005" />

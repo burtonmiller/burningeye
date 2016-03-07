@@ -1,28 +1,31 @@
 package com.burtonshead.burningeye.powerup;
 
 import android.util.Log;
+
 import com.burtonshead.burningeye.R;
-import org.apache.commons.lang.time.DateUtils;
+
 import org.json.JSONObject;
 
-public class Powerup {
-    public static final int POWERUP_BOMB = 6;
-    public static final int POWERUP_DMG_BLACKHOLE = 3;
-    public static final int POWERUP_DMG_FIRE = 2;
-    public static final int POWERUP_DMG_SHOCK = 1;
+public class Powerup
+{
     public static final int POWERUP_NONE = 0;
-    public static final int POWERUP_SLOW = 7;
-    private static final String POWERUP_TIME_LEFT_KEY = "powerup_time_left_key";
-    private static final String POWERUP_TYPE_KEY = "powerup_type";
+    public static final int POWERUP_DMG_SHOCK = 1;
+    public static final int POWERUP_DMG_FIRE = 2;
+    public static final int POWERUP_DMG_BLACKHOLE = 3;
     public static final int POWERUP_WIDE = 4;
     public static final int POWERUP_XWIDE = 5;
+    public static final int POWERUP_BOMB = 6;
+    public static final int POWERUP_SLOW = 7;
+
     public int mTimeLeft;
     public int mType;
 
-    public Powerup(int pType) {
+    public Powerup(int pType)
+    {
         mTimeLeft = POWERUP_NONE;
         mType = pType;
-        switch (this.mType) {
+        switch (this.mType)
+        {
             case POWERUP_BOMB /*6*/:
                 mTimeLeft = 2000;
                 break;
@@ -34,13 +37,16 @@ public class Powerup {
         }
     }
 
-    public Powerup(JSONObject j) {
+    public Powerup(JSONObject j)
+    {
         this.mTimeLeft = POWERUP_NONE;
         load(j);
     }
 
-    public int getDrawableID() {
-        switch (this.mType) {
+    public int getDrawableID()
+    {
+        switch (this.mType)
+        {
             case POWERUP_DMG_FIRE /*2*/:
                 return R.drawable.powerup_dmg_fire_button;
             case POWERUP_DMG_BLACKHOLE /*3*/:
@@ -58,23 +64,38 @@ public class Powerup {
         }
     }
 
-    public void load(JSONObject j) {
-        try {
+    public void load(JSONObject j)
+    {
+        try
+        {
             this.mType = j.getInt(POWERUP_TYPE_KEY);
             this.mTimeLeft = j.getInt(POWERUP_TIME_LEFT_KEY);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Log.e("Powerup.load", e.toString());
         }
     }
 
-    public JSONObject store() {
+    public JSONObject store()
+    {
         JSONObject j = new JSONObject();
-        try {
+        try
+        {
             j.put(POWERUP_TYPE_KEY, this.mType);
             j.put(POWERUP_TIME_LEFT_KEY, this.mTimeLeft);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Log.e("Powerup.store", e.toString());
         }
         return j;
     }
+
+    //*** NON-PUBLIC ***
+
+    private static final String POWERUP_TIME_LEFT_KEY = "powerup_time_left_key";
+    private static final String POWERUP_TYPE_KEY = "powerup_type";
+
+
 }

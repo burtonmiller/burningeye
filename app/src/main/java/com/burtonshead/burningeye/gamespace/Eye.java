@@ -10,24 +10,31 @@ import com.burtonshead.burningeye.R;
 import com.burtonshead.burningeye.logic.GameLogic;
 
 public class Eye {
-    private static final float[] BASE_BEAM_RADIUS;
-    public static final int BEAM_BLACKHOLE = 3;
     private static final float[] BEAM_DMG;
-    public static final int BEAM_FIRE = 2;
-    public static final int BEAM_NORMAL = 0;
+
+    private static final float[] BASE_BEAM_RADIUS;
     private static float[] BEAM_RADIUS = null;
+
     public static final float BEAM_RADIUS_DEFAULT;
+
+    public static final int BEAM_NORMAL = 0;
     public static final int BEAM_SHOCK = 1;
+    public static final int BEAM_FIRE = 2;
+    public static final int BEAM_BLACKHOLE = 3;
     public static final int BEAM_WIDE = 4;
     public static final int BEAM_XWIDE = 5;
-    private static float MAX_MOVE = 0.0f;
-    private static int MAX_X = 0;
-    private static int MAX_Y = 0;
+
     public static final float SPEED_FAST = 0.4f;
     public static final float SPEED_NORMAL = 0.25f;
     public static final float SPEED_SLOW = 0.15f;
+
+    private static int MAX_X = 0;
+    private static int MAX_Y = 0;
+    private static float MAX_MOVE = 0.0f;
+
     public static final float X_TOLERANCE = 2.0f;
     public static final float Y_TOLERANCE = 2.0f;
+
     private Bitmap[] mBeamBitmaps;
     public int mBeamType;
     public float mBeamX;

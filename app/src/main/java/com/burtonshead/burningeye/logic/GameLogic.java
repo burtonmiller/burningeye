@@ -1,5 +1,11 @@
 package com.burtonshead.burningeye.logic;
 
+/***
+ * Author: Burton Miller
+ *
+ * Copyright 2016
+ */
+
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -56,80 +62,6 @@ public class GameLogic implements SensorEventListener
     public Powerup mActivePowerup;
 
 
-    private static final float TICK = 33.0f;
-    private static float mSpeedMult;
-
-    private final int mRotation;
-    private float[] mAccValues;
-    private GameArchive mArchive;
-    private boolean mCollide;
-    private boolean mCollideChanged;
-    private long mCurrentTime;
-    private GameLevel mGameLevel;
-    private Vector<GameListener> mGameListeners;
-    private GameSpace mGameSpace;
-    private int mGameState;
-    private boolean mGameStateChanged;
-    private GameSurface mGameSurface;
-    private Handler mHandler;
-    private long mLastScore;
-    private long mLastTime;
-    private float[] mMagValues;
-    private MainLoop mMainLoop;
-    private Thread mMainThread;
-    private Vector<Powerup> mNewPowerups;
-    private float[] mOrientationResult;
-    private float[] mOrientationRotationMatrix;
-    private float[] mOrientationTransformMatrix;
-    private Vector<Powerup> mPowerups;
-    private boolean mSaucerAttack;
-    private boolean mSaucerAttackChanged;
-    private SensorManager mSensorMgr;
-    private SoundMgr mSoundMgr;
-
-
-    private class MainLoop extends Thread
-    {
-        private boolean mDone;
-
-        public MainLoop()
-        {
-            mDone = false;
-        }
-
-        public void run()
-        {
-            mDone = false;
-            mLastTime = System.currentTimeMillis();
-            while (!mDone)
-            {
-                mCurrentTime = System.currentTimeMillis();
-                mTimeDiff = (float) (mCurrentTime - mLastTime);
-
-                if (mTimeDiff >= TICK)
-                {
-                    mStepMult = mTimeDiff / TICK;
-                    //Log.i("MainLoop.run", "*** mStepMult = " + mStepMult + " ***");
-                    updateGame();
-                    mLastTime = mCurrentTime;
-                }
-            }
-        }
-
-        public void requestExitAndWait()
-        {
-            mDone = true;
-            try
-            {
-                join(1000);
-            }
-            catch (Exception x)
-            {
-                Log.e("GameSurface.DrawingThread.requestExitAndWait", x.getMessage());
-            }
-        }
-    }
-
     public GameLogic(Activity c, GameSurface g)
     {
         mInstance = this;
@@ -138,17 +70,21 @@ public class GameLogic implements SensorEventListener
 
         mActivePowerup = null;
         mMainThread = null;
+
+        mGameState = STATE_UNINIT;
+        mGameStateChanged = false;
+        mGameListeners = new Vector<>();
+
         mOrientX = 0.0f;
         mOrientY = 0.0f;
         mOrientZ = 0.0f;
-        mAccValues = new float[STATE_OVER];
-        mMagValues = new float[STATE_OVER];
+
+        mAccValues = new float[3];
+        mMagValues = new float[3];
         mOrientationRotationMatrix = new float[9];
         mOrientationTransformMatrix = new float[9];
-        mOrientationResult = new float[STATE_OVER];
-        mGameState = STATE_UNINIT;
-        mGameStateChanged = false;
-        mGameListeners = new Vector();
+        mOrientationResult = new float[3];
+
         mCurrentTime = 0;
         mLastTime = 0;
         mLastScore = 0;
@@ -156,13 +92,16 @@ public class GameLogic implements SensorEventListener
         mCollideChanged = false;
         mSaucerAttack = false;
         mSaucerAttackChanged = false;
-        mPowerups = new Vector();
-        mNewPowerups = new Vector();
+        mPowerups = new Vector<>();
+        mNewPowerups = new Vector<>();
+
         mArchive = new GameArchive(c);
         mArchive.load();
+
         mTimeDiff = 0.0f;
         mStepMult = 1.0f;
         mSpeedMult = 1.0f;
+
         initSound();
 
         Display display = mContext.getWindowManager().getDefaultDisplay();
@@ -176,50 +115,23 @@ public class GameLogic implements SensorEventListener
 
         mGameSurface = g;
         mGameSpace = new GameSpace((float) h, (float) w);
-        // pause 2, resume 1
         try
         {
             mSensorMgr = (SensorManager) mContext.getSystemService("sensor");
             Sensor accSensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             Sensor magSensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-            //Sensor rotationSensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-            mSensorMgr.registerListener(this, accSensor, Sensor.REPORTING_MODE_CONTINUOUS);
-            mSensorMgr.registerListener(this, magSensor, Sensor.REPORTING_MODE_CONTINUOUS);
-            //mSensorMgr.registerListener(this, rotationSensor, Sensor.REPORTING_MODE_CONTINUOUS);
+            mSensorMgr.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_GAME);
+            mSensorMgr.registerListener(this, magSensor, SensorManager.SENSOR_DELAY_GAME);
         }
         catch (Exception e)
         {
             Exception x = e;
             noSensorError();
         }
+
         setMainThread();
+
         initGameObjects();
-    }
-
-    private void calculateOrientation()
-    {
-        try
-        {
-            SensorManager.getOrientation(mOrientationRotationMatrix, mOrientationResult);
-            SensorManager.getRotationMatrix(mOrientationRotationMatrix, null, mAccValues, mMagValues);
-            SensorManager.remapCoordinateSystem(mOrientationRotationMatrix, 0, 180, mOrientationTransformMatrix);
-            mOrientY = (float) Math.toDegrees((double) mOrientationResult[2]);
-            mOrientZ = (float) (-Math.toDegrees((double) mOrientationResult[0]));
-            mOrientX = (float) -Math.toDegrees((double) mOrientationResult[1]);
-
-            if (mRotation == Surface.ROTATION_0)
-            {
-                float x = mOrientY;
-                mOrientY = -mOrientX;
-                mOrientX = x;
-            }
-
-        }
-        catch (Exception x)
-        {
-            Log.e("calcOrientation", "\n\n Problem calculating orientation \n\n", x);
-        }
-        //Log.i("calculateOrientation", "*** mOrientX = " + mOrientX + ", mOrientY = " + mOrientY + ", mOrientZ = " + mOrientZ + "***");
     }
 
     public Activity getActivity()
@@ -254,12 +166,17 @@ public class GameLogic implements SensorEventListener
         {
             return false;
         }
+
         mGameState = STATE_PAUSE;
+
         mArchive.restoreEyePos(mEye);
         mArchive.restorePowerups(mPowerups);
         mArchive.restoreGameSpace(mGameSpace);
+
         loadLevel(mArchive.restoreGameLevel(), false);
+
         Powerup p = mArchive.restoreActivePowerup();
+
         if (p != null)
         {
             activatePowerup(p);
@@ -394,6 +311,10 @@ public class GameLogic implements SensorEventListener
         return mPowerups;
     }
 
+    /**
+     * Add a new power
+     * @param p Powerup
+     */
     public synchronized void addPowerup(Powerup p)
     {
         mPowerups.insertElementAt(p, STATE_NEW);
@@ -404,6 +325,9 @@ public class GameLogic implements SensorEventListener
         informPowerupsChangedSafe();
     }
 
+    /**
+     * Add newly available Powerups, and make sure list is not too long
+     */
     public synchronized void addNewPowerups()
     {
         int size = mNewPowerups.size();
@@ -422,10 +346,9 @@ public class GameLogic implements SensorEventListener
         }
     }
 
-    /*
-     * Enabled aggressive block sorting
-     * Enabled unnecessary exception pruning
-     * Enabled aggressive exception aggregation
+    /**
+     * Apply current powerup to game state
+     * @param powerup
      */
     public synchronized void activatePowerup(Powerup powerup)
     {
@@ -433,48 +356,50 @@ public class GameLogic implements SensorEventListener
         {
             deactivatePowerup();
         }
+
         mPowerups.remove((Object) powerup);
         mActivePowerup = powerup;
+
         switch (powerup.mType)
         {
             default:
             {
-                mEye.setBeamType(0);
+                mEye.setBeamType(Eye.BEAM_NORMAL);
                 break;
             }
-            case 1:
+            case Powerup.POWERUP_DMG_SHOCK:
             {
-                mEye.setBeamType(1);
+                mEye.setBeamType(Eye.BEAM_SHOCK);
                 break;
             }
-            case 2:
+            case Powerup.POWERUP_DMG_FIRE:
             {
-                mEye.setBeamType(2);
+                mEye.setBeamType(Eye.BEAM_FIRE);
                 break;
             }
-            case 3:
+            case Powerup.POWERUP_DMG_BLACKHOLE:
             {
-                mEye.setBeamType(3);
+                mEye.setBeamType(Eye.BEAM_BLACKHOLE);
                 break;
             }
-            case 4:
+            case Powerup.POWERUP_WIDE:
             {
-                mEye.setBeamType(4);
+                mEye.setBeamType(Eye.BEAM_WIDE);
                 break;
             }
-            case 5:
+            case Powerup.POWERUP_XWIDE:
             {
-                mEye.setBeamType(5);
+                mEye.setBeamType(Eye.BEAM_XWIDE);
                 break;
             }
-            case 6:
+            case Powerup.POWERUP_BOMB:
             {
-                mEye.setBeamType(0);
+                mEye.setBeamType(Eye.BEAM_NORMAL);
                 break;
             }
-            case 7:
+            case Powerup.POWERUP_SLOW:
             {
-                mEye.setBeamType(0);
+                mEye.setBeamType(Eye.BEAM_NORMAL);
                 mSpeedMult = 0.25f;
             }
         }
@@ -483,37 +408,45 @@ public class GameLogic implements SensorEventListener
         return;
     }
 
-
+    /**
+     * Activate the selected Powerup
+     * @param index
+     */
     public synchronized void activatePowerup(int index)
     {
         activatePowerup((Powerup) mPowerups.get(index));
     }
 
+    /**
+     * Deactivate the current Powerup and restore the Beam and Speed states
+     */
     public synchronized void deactivatePowerup()
     {
         if (mActivePowerup != null)
         {
             switch (mActivePowerup.mType)
             {
-                case STATE_PAUSE /*2*/:
-                    mEye.setBeamType(STATE_NEW);
+                case Powerup.POWERUP_DMG_SHOCK:
+                    mEye.setBeamType(Eye.BEAM_NORMAL);
+                case Powerup.POWERUP_DMG_FIRE:
+                    mEye.setBeamType(Eye.BEAM_NORMAL);
                     break;
-                case STATE_OVER /*3*/:
-                    mEye.setBeamType(STATE_NEW);
+                case Powerup.POWERUP_DMG_BLACKHOLE:
+                    mEye.setBeamType(Eye.BEAM_NORMAL);
                     break;
-                case STATE_LEVEL_COMPLETE /*4*/:
-                    mEye.setBeamType(STATE_NEW);
+                case Powerup.POWERUP_WIDE:
+                    mEye.setBeamType(Eye.BEAM_NORMAL);
                     break;
-                case DateUtils.RANGE_MONTH_SUNDAY /*5*/:
-                    mEye.setBeamType(STATE_NEW);
+                case Powerup.POWERUP_XWIDE:
+                    mEye.setBeamType(Eye.BEAM_NORMAL);
                     break;
-                case DateUtils.RANGE_MONTH_MONDAY /*6*/:
+                case Powerup.POWERUP_BOMB:
                     break;
-                case Powerup.POWERUP_SLOW /*7*/:
+                case Powerup.POWERUP_SLOW:
                     mSpeedMult = 1.0f;
                     break;
                 default:
-                    mEye.setBeamType(STATE_NEW);
+                    mEye.setBeamType(Eye.BEAM_NORMAL);
                     break;
             }
         }
@@ -526,6 +459,11 @@ public class GameLogic implements SensorEventListener
         return mActivePowerup;
     }
 
+    /**
+     * Get current Speed Multiplier - which modifies how fast all the
+     * saucers will fly
+     * @return
+     */
     public float getSpeedMult()
     {
         float mult = 0.8f;
@@ -546,8 +484,11 @@ public class GameLogic implements SensorEventListener
     {
     }
 
-    public float[] mRotationVector = new float[4];
-
+    /**
+     * Captures Accelerometer and Magnetometer to get values
+     * needed to determine device tilt
+     * @param event
+     */
     public void onSensorChanged(SensorEvent event)
     {
         final String comma = ", ";
@@ -585,6 +526,84 @@ public class GameLogic implements SensorEventListener
         }
     }
 
+
+    //*** NON-PUBLIC ***
+
+    private static final float TICK = 33.0f;
+    private static float mSpeedMult;
+
+    private final int mRotation;   // tablets and phones have different rotation settings - which reverses X/Y coordinates
+    private float[] mAccValues;    // Acclerometer values for Orientation calculation
+    private GameArchive mArchive;  // Storage archive for game state
+    private boolean mCollide;      // Collision in progress?
+    private boolean mCollideChanged;   // Collision state changing?
+    private long mCurrentTime;     // Current time in milliseconds
+    private GameLevel mGameLevel;  // Current loaded game level
+    private Vector<GameListener> mGameListeners;   // Listeners to game state
+    private GameSpace mGameSpace;  // Game space - where objects interact
+    private int mGameState;        // Game state (paused, running, etc)
+    private boolean mGameStateChanged;   // Did the game state just change?
+    private GameSurface mGameSurface;   // Drawing surface for the game
+    private Handler mHandler;      // Handler used to process Runnables on the UI thread
+    private long mLastScore;       // Most recent score
+    private long mLastTime;        // Time before the Current Time (need last two values)
+    private float[] mMagValues;    // Magnetometer values for current Orientation calculation
+    private MainLoop mMainLoop;    // Main game loop object - runs in its own thread
+    private Thread mMainThread;    // Main thread within the game loop
+    private Vector<Powerup> mNewPowerups;  // List of newly acquired Powerups
+    private float[] mOrientationResult;    // Intermediate values used to determine Orientation - stored once for memory efficiency
+    private float[] mOrientationRotationMatrix;    // Intermediate values used to determine Orientation - stored once for memory efficiency
+    private float[] mOrientationTransformMatrix;   // Intermediate values used to determine Orientation - stored once for memory efficiency
+    private Vector<Powerup> mPowerups;     //List of currently available acquired Powerups
+    private boolean mSaucerAttack;         // Is any saucer in a state of attack (to adjust sound)
+    private boolean mSaucerAttackChanged;  // Has the state of attack of any saucer just changed
+    private SensorManager mSensorMgr;      // Used to calculate Orientation for tilt
+    private SoundMgr mSoundMgr;            // Plays sound effects
+
+
+    private class MainLoop extends Thread
+    {
+        private boolean mDone;
+
+        public MainLoop()
+        {
+            mDone = false;
+        }
+
+        public void run()
+        {
+            mDone = false;
+            mLastTime = System.currentTimeMillis();
+            while (!mDone)
+            {
+                mCurrentTime = System.currentTimeMillis();
+                mTimeDiff = (float) (mCurrentTime - mLastTime);
+
+                if (mTimeDiff >= TICK)
+                {
+                    mStepMult = mTimeDiff / TICK;
+                    //Log.i("MainLoop.run", "*** mStepMult = " + mStepMult + " ***");
+                    updateGame();
+                    mLastTime = mCurrentTime;
+                }
+            }
+        }
+
+        public void requestExitAndWait()
+        {
+            mDone = true;
+            try
+            {
+                join(1000);
+            }
+            catch (Exception x)
+            {
+                Log.e("GameSurface.DrawingThread.requestExitAndWait", x.getMessage());
+            }
+        }
+    }
+
+
     private void initGameObjects()
     {
         mEye = new Eye(mContext);
@@ -594,7 +613,7 @@ public class GameLogic implements SensorEventListener
     {
         mSoundMgr = new SoundMgr(mContext);
         mSoundMgr.loadLoop(R.raw.beam_collide_sound, 0.5f);
-        mSoundMgr.loadLoop(R.raw.eye_sound, Eye.SPEED_FAST);
+        mSoundMgr.loadLoop(R.raw.eye_sound, 0.4f);
         mSoundMgr.loadLoop(R.raw.saucer_beam, 0.7f);
         mSoundMgr.loadSound(R.raw.appear_sound, 1.0f);
         mSoundMgr.loadSound(R.raw.explosion_sound, 0.5f);
@@ -606,7 +625,7 @@ public class GameLogic implements SensorEventListener
     {
         new Builder(mContext)
                 .setTitle("No Orientation Sensor")
-                .setMessage("Your device does not seem to have an orientation sensor.  This game will not function without an technology.")
+                .setMessage("Your device does not seem to have an orientation sensor.  This game will not function without this technology.")
                 .setNegativeButton("Quit", new OnClickListener()
                 {
                     public void onClick(DialogInterface dialog, int which)
@@ -625,8 +644,39 @@ public class GameLogic implements SensorEventListener
         mSoundMgr.startLoop(R.raw.eye_sound);
     }
 
-    //*** Informs UI listeners of changes to games state
-    //*** Must be called in UI thread - see informStateChangeSafe()
+    /**
+     * Determines the X/Y tilt of the device from a flat position
+     */
+    private void calculateOrientation()
+    {
+        try
+        {
+            SensorManager.getOrientation(mOrientationRotationMatrix, mOrientationResult);
+            SensorManager.getRotationMatrix(mOrientationRotationMatrix, null, mAccValues, mMagValues);
+            SensorManager.remapCoordinateSystem(mOrientationRotationMatrix, 0, 180, mOrientationTransformMatrix);
+            mOrientY = (float) Math.toDegrees((double) mOrientationResult[2]);
+            mOrientZ = (float) (-Math.toDegrees((double) mOrientationResult[0]));
+            mOrientX = (float) -Math.toDegrees((double) mOrientationResult[1]);
+
+            if (mRotation == Surface.ROTATION_0)
+            {
+                float x = mOrientY;
+                mOrientY = -mOrientX;
+                mOrientX = x;
+            }
+
+        }
+        catch (Exception x)
+        {
+            Log.e("calcOrientation", "\n\n Problem calculating orientation \n\n", x);
+        }
+        //Log.i("calculateOrientation", "*** mOrientX = " + mOrientX + ", mOrientY = " + mOrientY + ", mOrientZ = " + mOrientZ + "***");
+    }
+
+    /**
+      * Informs UI listeners of changes to games state
+      * Must be called in UI thread - see informStateChangeSafe()
+      */
     private synchronized void informStateChange()
     {
         Iterator it = mGameListeners.iterator();
@@ -636,7 +686,9 @@ public class GameLogic implements SensorEventListener
         }
     }
 
-    //*** Informs UI listeners of changes to game state in the UI thread
+    /**
+     *  Informs UI listeners of changes to game state in the UI thread
+     */
     private synchronized void informStateChangeSafe()
     {
         if (Thread.currentThread().equals(mMainThread))
@@ -655,8 +707,10 @@ public class GameLogic implements SensorEventListener
         }
     }
 
-    //*** Informs objects in UI thread of changes to powerup state
-    //*** Must be called in UI thread - see informPowerupsChangesSafe()
+    /**
+      * Informs objects in UI thread of changes to powerup state
+      * Must be called in UI thread - see informPowerupsChangesSafe()
+      */
     private synchronized void informPowerupsChanged()
     {
         Iterator it = mGameListeners.iterator();
@@ -667,7 +721,9 @@ public class GameLogic implements SensorEventListener
         mEye.mReload = true;
     }
 
-    //*** Informs objects in UI thread of changes to powerup state in the UI thread
+    /**
+     * Informs objects in UI thread of changes to powerup state in the UI thread
+      */
     private synchronized void informPowerupsChangedSafe()
     {
         if (Thread.currentThread().equals(mMainThread))
@@ -686,8 +742,10 @@ public class GameLogic implements SensorEventListener
         }
     }
 
-    //*** Informs objects in UI thread of changes to score state
-    //*** Must be called in UI thread - see informScoreChangeSafe()
+    /**
+     * Informs objects in UI thread of changes to score state
+     * Must be called in UI thread - see informScoreChangeSafe()
+     */
     private synchronized void informScoreChange()
     {
         Iterator it = mGameListeners.iterator();
@@ -697,7 +755,9 @@ public class GameLogic implements SensorEventListener
         }
     }
 
-    //*** Informs objects in UI thread of changes to score state in UI Thread
+    /**
+     * Informs objects in UI thread of changes to score state in UI Thread
+      */
     private synchronized void informScoreChangeSafe()
     {
         if (Thread.currentThread().equals(mMainThread))
@@ -715,6 +775,8 @@ public class GameLogic implements SensorEventListener
             });
         }
     }
+
+    // All the update methods are used to manage the game state step-by-step
 
     private void updateGame()
     {
@@ -743,15 +805,6 @@ public class GameLogic implements SensorEventListener
         }
     }
 
-    private void updateScore()
-    {
-        if (mGameLevel != null && mLastScore != mGameLevel.mScore)
-        {
-            mLastScore = mGameLevel.mScore;
-            informScoreChangeSafe();
-        }
-    }
-
     private void updateInput()
     {
         mEye.moveBeam(mOrientX, mOrientY, mStepMult);
@@ -766,9 +819,7 @@ public class GameLogic implements SensorEventListener
         if (mActivePowerup != null)
         {
             Powerup powerup = mActivePowerup;
-            Log.i("GameLogic.updatePowerups()", "\n***]n***\n*** mTimeLeft = " + powerup.mTimeLeft + "\n" +
-                    "***]n***\n" +
-                    "***\n");
+            //Log.i("GameLogic.updatePowerups()", "*** mTimeLeft = " + powerup.mTimeLeft + "***");
             powerup.mTimeLeft = (int) (((float) powerup.mTimeLeft) - mTimeDiff);
             if (mActivePowerup.mTimeLeft <= 0)
             {
@@ -806,11 +857,17 @@ public class GameLogic implements SensorEventListener
         mSaucerAttack = attack;
     }
 
+    /**
+     * Draws the current game state
+     */
     private void updateGraphics()
     {
         mGameSurface.updateGraphics();
     }
 
+    /**
+     * Plays the proper sound depending on state
+     */
     private void updateSound()
     {
         if (mCollideChanged || mSaucerAttackChanged)
@@ -835,6 +892,21 @@ public class GameLogic implements SensorEventListener
         }
     }
 
+    /**
+     * Tells the UI thread the current score
+     */
+    private void updateScore()
+    {
+        if (mGameLevel != null && mLastScore != mGameLevel.mScore)
+        {
+            mLastScore = mGameLevel.mScore;
+            informScoreChangeSafe();
+        }
+    }
+
+    /**
+     * Starts the main game loop, creating if not present
+     */
     private void resumeMainLoop()
     {
         if (mMainLoop == null)
@@ -844,6 +916,9 @@ public class GameLogic implements SensorEventListener
         }
     }
 
+    /**
+     * Pauses the main game loop
+     */
     private void pauseMainLoop()
     {
         if (mMainLoop != null)
@@ -853,6 +928,10 @@ public class GameLogic implements SensorEventListener
         }
     }
 
+    /**
+     * Pause is often called from the UI thread, because that is where the user commands
+     * come from
+     */
     private void pauseMainLoopSafe()
     {
         if (Thread.currentThread().equals(mMainThread))
@@ -871,18 +950,29 @@ public class GameLogic implements SensorEventListener
         }
     }
 
+    /**
+     * Load a new Game level
+     *
+     * @param level
+     * @param newLevel  Need to know if this is new
+     */
     private void loadLevel(GameLevel level, boolean newLevel)
     {
         mGameLevel = level;
         loadMap(newLevel);
     }
 
+    /**
+     * Load a new level base level - higher levels are generated and stored
+     */
     private void loadNewLevel()
     {
         try
         {
+//            loadLevel(new GameLevel(new JSONObject(mContext.getResources()
+//                    .getString(mContext.getResources().getIdentifier("base_level", "string", "com.burtonshead.burningeye")))), true);
             loadLevel(new GameLevel(new JSONObject(mContext.getResources()
-                    .getString(mContext.getResources().getIdentifier("base_level", "string", "com.burtonshead.burningeye")))), true);
+                    .getString(R.string.base_level))), true);
         }
         catch (Exception e)
         {
@@ -892,6 +982,9 @@ public class GameLogic implements SensorEventListener
         mEye.recenter();
     }
 
+    /**
+     * Makes necessary updates and loads the next level
+     */
     private void loadNextLevel()
     {
         mGameSpace.restoreCities();
@@ -906,6 +999,10 @@ public class GameLogic implements SensorEventListener
         mGameSpace.removeAllSaucers();
     }
 
+    /**
+     * Loads the map for the current level
+     * @param newCities
+     */
     private void loadMap(boolean newCities)
     {
         mMap = new Map(mGameLevel.getGameZone());
@@ -917,6 +1014,12 @@ public class GameLogic implements SensorEventListener
         }
     }
 
+    /**
+     * Sends user to the high score screen.
+     * Needs to happen in UI thread.
+     *
+     * @param score
+     */
     private void processScore(long score)
     {
         Vector<HighScore> highScores = App.getSettings().getHighScores();
@@ -928,6 +1031,9 @@ public class GameLogic implements SensorEventListener
         }
     }
 
+    /**
+     * Sends user to the high score screen from the UI thread
+     */
     private void processScoreSafe()
     {
         final long score = mGameLevel != null ? mGameLevel.mScore : 0;
