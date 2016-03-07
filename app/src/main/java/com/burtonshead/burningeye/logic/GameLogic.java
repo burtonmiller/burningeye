@@ -40,21 +40,30 @@ public class GameLogic implements SensorEventListener
     public static final int STATE_RESUME = 1;
     public static final int STATE_UNINIT = -1;
 
-    private static final float TICK = 33.0f;
-
     public static Eye mEye;
     public static GameLogic mInstance;
     public static DisplayMetrics mMetrics;
-    private static float mSpeedMult;
+
     public static float mStepMult;
     public static float mTimeDiff;
+
+    public float mOrientX;
+    public float mOrientY;
+    public float mOrientZ;
+
+    public Activity mContext;
+    public Map mMap;
+    public Powerup mActivePowerup;
+
+
+    private static final float TICK = 33.0f;
+    private static float mSpeedMult;
+
     private final int mRotation;
     private float[] mAccValues;
-    public Powerup mActivePowerup;
     private GameArchive mArchive;
     private boolean mCollide;
     private boolean mCollideChanged;
-    public Activity mContext;
     private long mCurrentTime;
     private GameLevel mGameLevel;
     private Vector<GameListener> mGameListeners;
@@ -68,11 +77,7 @@ public class GameLogic implements SensorEventListener
     private float[] mMagValues;
     private MainLoop mMainLoop;
     private Thread mMainThread;
-    public Map mMap;
     private Vector<Powerup> mNewPowerups;
-    public float mOrientX;
-    public float mOrientY;
-    public float mOrientZ;
     private float[] mOrientationResult;
     private float[] mOrientationRotationMatrix;
     private float[] mOrientationTransformMatrix;
@@ -83,89 +88,42 @@ public class GameLogic implements SensorEventListener
     private SoundMgr mSoundMgr;
 
 
-    class StateChangePoster implements Runnable
-    {
-        public void run()
-        {
-            GameLogic.this.informStateChange();
-        }
-    }
-
-    class PowerupChangePoster implements Runnable
-    {
-        public void run()
-        {
-            GameLogic.this.informPowerupsChanged();
-        }
-    }
-
-    class ScoreInformPoster implements Runnable
-    {
-        public void run()
-        {
-            GameLogic.this.informScoreChange();
-        }
-    }
-
-    class PauseGamePoster implements Runnable
-    {
-        public void run()
-        {
-            GameLogic.this.pauseMainLoop();
-        }
-    }
-
-    class ProcessScorePoster implements Runnable
-    {
-        private final long mScore;
-
-        ProcessScorePoster(long j)
-        {
-            mScore = j;
-        }
-
-        public void run()
-        {
-            GameLogic.this.processScore(mScore);
-        }
-    }
-
     private class MainLoop extends Thread
     {
         private boolean mDone;
 
         public MainLoop()
         {
-            this.mDone = false;
+            mDone = false;
         }
 
         public void run()
         {
-            this.mDone = false;
-            GameLogic.this.mLastTime = System.currentTimeMillis();
-            while (!this.mDone)
+            mDone = false;
+            mLastTime = System.currentTimeMillis();
+            while (!mDone)
             {
-                GameLogic.this.mCurrentTime = System.currentTimeMillis();
-                GameLogic.mTimeDiff = (float) (GameLogic.this.mCurrentTime - GameLogic.this.mLastTime);
+                mCurrentTime = System.currentTimeMillis();
+                mTimeDiff = (float) (mCurrentTime - mLastTime);
 
-                //???
-                if (GameLogic.mTimeDiff >= GameLogic.TICK)
+                if (mTimeDiff >= TICK)
                 {
-                    GameLogic.mStepMult = GameLogic.mTimeDiff / GameLogic.TICK;
-                    //Log.i("MainLoop.run", "*** mStepMult = " + GameLogic.mStepMult + " ***");
-                    GameLogic.this.updateGame();
-                    GameLogic.this.mLastTime = GameLogic.this.mCurrentTime;
+                    mStepMult = mTimeDiff / TICK;
+                    //Log.i("MainLoop.run", "*** mStepMult = " + mStepMult + " ***");
+                    updateGame();
+                    mLastTime = mCurrentTime;
                 }
             }
         }
 
         public void requestExitAndWait()
         {
-            this.mDone = true;
+            mDone = true;
             try
             {
                 join(1000);
-            } catch (Exception x)
+            }
+            catch (Exception x)
             {
                 Log.e("GameSurface.DrawingThread.requestExitAndWait", x.getMessage());
             }
@@ -178,30 +136,30 @@ public class GameLogic implements SensorEventListener
 
         setContext(c);
 
-        this.mActivePowerup = null;
-        this.mMainThread = null;
-        this.mOrientX = 0.0f;
-        this.mOrientY = 0.0f;
-        this.mOrientZ = 0.0f;
-        this.mAccValues = new float[STATE_OVER];
-        this.mMagValues = new float[STATE_OVER];
-        this.mOrientationRotationMatrix = new float[9];
-        this.mOrientationTransformMatrix = new float[9];
-        this.mOrientationResult = new float[STATE_OVER];
-        this.mGameState = STATE_UNINIT;
-        this.mGameStateChanged = false;
-        this.mGameListeners = new Vector();
-        this.mCurrentTime = 0;
-        this.mLastTime = 0;
-        this.mLastScore = 0;
-        this.mCollide = false;
-        this.mCollideChanged = false;
-        this.mSaucerAttack = false;
-        this.mSaucerAttackChanged = false;
-        this.mPowerups = new Vector();
-        this.mNewPowerups = new Vector();
-        this.mArchive = new GameArchive(c);
-        this.mArchive.load();
+        mActivePowerup = null;
+        mMainThread = null;
+        mOrientX = 0.0f;
+        mOrientY = 0.0f;
+        mOrientZ = 0.0f;
+        mAccValues = new float[STATE_OVER];
+        mMagValues = new float[STATE_OVER];
+        mOrientationRotationMatrix = new float[9];
+        mOrientationTransformMatrix = new float[9];
+        mOrientationResult = new float[STATE_OVER];
+        mGameState = STATE_UNINIT;
+        mGameStateChanged = false;
+        mGameListeners = new Vector();
+        mCurrentTime = 0;
+        mLastTime = 0;
+        mLastScore = 0;
+        mCollide = false;
+        mCollideChanged = false;
+        mSaucerAttack = false;
+        mSaucerAttackChanged = false;
+        mPowerups = new Vector();
+        mNewPowerups = new Vector();
+        mArchive = new GameArchive(c);
+        mArchive.load();
         mTimeDiff = 0.0f;
         mStepMult = 1.0f;
         mSpeedMult = 1.0f;
@@ -216,18 +174,18 @@ public class GameLogic implements SensorEventListener
         int h = mMetrics.heightPixels;
         int w = mMetrics.widthPixels;
 
-        this.mGameSurface = g;
-        this.mGameSpace = new GameSpace((float) h, (float) w);
+        mGameSurface = g;
+        mGameSpace = new GameSpace((float) h, (float) w);
         // pause 2, resume 1
         try
         {
-            this.mSensorMgr = (SensorManager) this.mContext.getSystemService("sensor");
-            Sensor accSensor = this.mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            Sensor magSensor = this.mSensorMgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-            //Sensor rotationSensor = this.mSensorMgr.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-            this.mSensorMgr.registerListener(this, accSensor, Sensor.REPORTING_MODE_CONTINUOUS);
-            this.mSensorMgr.registerListener(this, magSensor, Sensor.REPORTING_MODE_CONTINUOUS);
-            //this.mSensorMgr.registerListener(this, rotationSensor, Sensor.REPORTING_MODE_CONTINUOUS);
+            mSensorMgr = (SensorManager) mContext.getSystemService("sensor");
+            Sensor accSensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            Sensor magSensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            //Sensor rotationSensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            mSensorMgr.registerListener(this, accSensor, Sensor.REPORTING_MODE_CONTINUOUS);
+            mSensorMgr.registerListener(this, magSensor, Sensor.REPORTING_MODE_CONTINUOUS);
+            //mSensorMgr.registerListener(this, rotationSensor, Sensor.REPORTING_MODE_CONTINUOUS);
         }
         catch (Exception e)
         {
@@ -242,12 +200,12 @@ public class GameLogic implements SensorEventListener
     {
         try
         {
-            SensorManager.getOrientation(this.mOrientationRotationMatrix, this.mOrientationResult);
-            SensorManager.getRotationMatrix(this.mOrientationRotationMatrix, null, this.mAccValues, this.mMagValues);
-            SensorManager.remapCoordinateSystem(this.mOrientationRotationMatrix, 0, 180, this.mOrientationTransformMatrix);
-            this.mOrientY = (float) Math.toDegrees((double) this.mOrientationResult[2]);
-            this.mOrientZ = (float) (-Math.toDegrees((double) this.mOrientationResult[0]));
-            this.mOrientX = (float) -Math.toDegrees((double) this.mOrientationResult[1]);
+            SensorManager.getOrientation(mOrientationRotationMatrix, mOrientationResult);
+            SensorManager.getRotationMatrix(mOrientationRotationMatrix, null, mAccValues, mMagValues);
+            SensorManager.remapCoordinateSystem(mOrientationRotationMatrix, 0, 180, mOrientationTransformMatrix);
+            mOrientY = (float) Math.toDegrees((double) mOrientationResult[2]);
+            mOrientZ = (float) (-Math.toDegrees((double) mOrientationResult[0]));
+            mOrientX = (float) -Math.toDegrees((double) mOrientationResult[1]);
 
             if (mRotation == Surface.ROTATION_0)
             {
@@ -256,7 +214,8 @@ public class GameLogic implements SensorEventListener
                 mOrientX = x;
             }
 
-        } catch (Exception x)
+        }
+        catch (Exception x)
         {
             Log.e("calcOrientation", "\n\n Problem calculating orientation \n\n", x);
         }
@@ -265,42 +224,42 @@ public class GameLogic implements SensorEventListener
 
     public Activity getActivity()
     {
-        return this.mContext;
+        return mContext;
     }
 
     public boolean hasSavedGame()
     {
-        return this.mArchive.isLoaded();
+        return mArchive.isLoaded();
     }
 
     public void saveGame()
     {
-        this.mArchive.clear();
-        this.mArchive.saveEyePos(mEye);
-        this.mArchive.saveActivePowerup(this.mActivePowerup);
-        this.mArchive.savePowerups(this.mPowerups);
-        this.mArchive.saveGameLevel(this.mGameLevel);
-        this.mArchive.saveGameSpace(this.mGameSpace);
-        this.mArchive.store();
+        mArchive.clear();
+        mArchive.saveEyePos(mEye);
+        mArchive.saveActivePowerup(mActivePowerup);
+        mArchive.savePowerups(mPowerups);
+        mArchive.saveGameLevel(mGameLevel);
+        mArchive.saveGameSpace(mGameSpace);
+        mArchive.store();
     }
 
     public void clearSaved()
     {
-        this.mArchive.erase();
+        mArchive.erase();
     }
 
     public boolean restoreGame()
     {
-        if (!this.mArchive.isLoaded())
+        if (!mArchive.isLoaded())
         {
             return false;
         }
-        this.mGameState = STATE_PAUSE;
-        this.mArchive.restoreEyePos(mEye);
-        this.mArchive.restorePowerups(this.mPowerups);
-        this.mArchive.restoreGameSpace(this.mGameSpace);
-        loadLevel(this.mArchive.restoreGameLevel(), false);
-        Powerup p = this.mArchive.restoreActivePowerup();
+        mGameState = STATE_PAUSE;
+        mArchive.restoreEyePos(mEye);
+        mArchive.restorePowerups(mPowerups);
+        mArchive.restoreGameSpace(mGameSpace);
+        loadLevel(mArchive.restoreGameLevel(), false);
+        Powerup p = mArchive.restoreActivePowerup();
         if (p != null)
         {
             activatePowerup(p);
@@ -310,62 +269,62 @@ public class GameLogic implements SensorEventListener
 
     public void addScore(long score)
     {
-        GameLevel gameLevel = this.mGameLevel;
+        GameLevel gameLevel = mGameLevel;
         gameLevel.mScore += score;
     }
 
     public long getScore()
     {
-        if (this.mGameLevel == null)
+        if (mGameLevel == null)
         {
             return 0;
         }
-        return this.mGameLevel.mScore;
+        return mGameLevel.mScore;
     }
 
     public void setScore(long score)
     {
-        this.mGameLevel.mScore = score;
+        mGameLevel.mScore = score;
     }
 
     public void resumeSounds()
     {
-        this.mSoundMgr.resumeLoops();
+        mSoundMgr.resumeLoops();
     }
 
     public void pauseSounds()
     {
-        this.mSoundMgr.pauseLoops();
+        mSoundMgr.pauseLoops();
     }
 
     public void cleanup()
     {
-        this.mSoundMgr.cleanup();
+        mSoundMgr.cleanup();
     }
 
     public void setContext(Activity c)
     {
-        this.mContext = c;
+        mContext = c;
     }
 
     public int getWaveCount()
     {
-        return this.mGameLevel.getWaveCount();
+        return mGameLevel.getWaveCount();
     }
 
     public void addGameListener(GameListener g)
     {
-        if (!this.mGameListeners.contains(g))
+        if (!mGameListeners.contains(g))
         {
-            this.mGameListeners.add(g);
+            mGameListeners.add(g);
         }
     }
 
     public void removeGameListener(GameListener g)
     {
-        if (this.mGameListeners.contains(g))
+        if (mGameListeners.contains(g))
         {
-            this.mGameListeners.remove(g);
+            mGameListeners.remove(g);
         }
     }
 
@@ -381,7 +340,7 @@ public class GameLogic implements SensorEventListener
             default:
             {
                 processScoreSafe();
-                this.clearSaved();
+                clearSaved();
             }
             case STATE_UNINIT:
             case STATE_PAUSE:
@@ -422,7 +381,7 @@ public class GameLogic implements SensorEventListener
 
     public synchronized int getGameState()
     {
-        return this.mGameState;
+        return mGameState;
     }
 
     public Eye getEye()
@@ -432,30 +391,30 @@ public class GameLogic implements SensorEventListener
 
     public synchronized Vector<Powerup> getPowerups()
     {
-        return this.mPowerups;
+        return mPowerups;
     }
 
     public synchronized void addPowerup(Powerup p)
     {
-        this.mPowerups.insertElementAt(p, STATE_NEW);
-        while (this.mPowerups.size() > STATE_LEVEL_COMPLETE)
+        mPowerups.insertElementAt(p, STATE_NEW);
+        while (mPowerups.size() > STATE_LEVEL_COMPLETE)
         {
-            this.mPowerups.remove(STATE_LEVEL_COMPLETE);
+            mPowerups.remove(STATE_LEVEL_COMPLETE);
         }
         informPowerupsChangedSafe();
     }
 
     public synchronized void addNewPowerups()
     {
-        int size = this.mNewPowerups.size();
+        int size = mNewPowerups.size();
         for (int i = STATE_NEW; i < size; i += STATE_RESUME)
         {
-            this.mPowerups.insertElementAt((Powerup) this.mNewPowerups.get(i), STATE_NEW);
+            mPowerups.insertElementAt((Powerup) mNewPowerups.get(i), STATE_NEW);
         }
-        this.mNewPowerups.clear();
-        while (this.mPowerups.size() > STATE_LEVEL_COMPLETE)
+        mNewPowerups.clear();
+        while (mPowerups.size() > STATE_LEVEL_COMPLETE)
         {
-            this.mPowerups.remove(STATE_LEVEL_COMPLETE);
+            mPowerups.remove(STATE_LEVEL_COMPLETE);
         }
         if (size > 0)
         {
@@ -470,12 +429,12 @@ public class GameLogic implements SensorEventListener
      */
     public synchronized void activatePowerup(Powerup powerup)
     {
-        if (this.mActivePowerup != null)
+        if (mActivePowerup != null)
         {
-            this.deactivatePowerup();
+            deactivatePowerup();
         }
-        this.mPowerups.remove((Object) powerup);
-        this.mActivePowerup = powerup;
+        mPowerups.remove((Object) powerup);
+        mActivePowerup = powerup;
         switch (powerup.mType)
         {
             default:
@@ -527,14 +486,14 @@ public class GameLogic implements SensorEventListener
 
     public synchronized void activatePowerup(int index)
     {
-        activatePowerup((Powerup) this.mPowerups.get(index));
+        activatePowerup((Powerup) mPowerups.get(index));
     }
 
     public synchronized void deactivatePowerup()
     {
-        if (this.mActivePowerup != null)
+        if (mActivePowerup != null)
         {
-            switch (this.mActivePowerup.mType)
+            switch (mActivePowerup.mType)
             {
                 case STATE_PAUSE /*2*/:
                     mEye.setBeamType(STATE_NEW);
@@ -558,29 +517,29 @@ public class GameLogic implements SensorEventListener
                     break;
             }
         }
-        this.mActivePowerup = null;
+        mActivePowerup = null;
         informPowerupsChangedSafe();
     }
 
     public Powerup getActivePowerup()
     {
-        return this.mActivePowerup;
+        return mActivePowerup;
     }
 
     public float getSpeedMult()
     {
         float mult = 0.8f;
-        if (this.mGameLevel != null)
+        if (mGameLevel != null)
         {
-            mult = this.mGameLevel.mSpeedBase;
+            mult = mGameLevel.mSpeedBase;
         }
         return mult * mSpeedMult * mMetrics.density;
     }
 
     public void setMainThread()
     {
-        this.mMainThread = Thread.currentThread();
-        this.mHandler = new Handler();
+        mMainThread = Thread.currentThread();
+        mHandler = new Handler();
     }
 
     public void onAccuracyChanged(Sensor arg0, int arg1)
@@ -596,21 +555,22 @@ public class GameLogic implements SensorEventListener
         {
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
             {
-                System.arraycopy(event.values, 0, this.mAccValues, 0, event.values.length);
+                System.arraycopy(event.values, 0, mAccValues, 0, event.values.length);
                 //Log.i("onSensorChanged.Accelerometer", event.values[0] + comma + event.values[STATE_RESUME] + comma + event.values[STATE_PAUSE] + ")");
             }
 
             if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
             {
-                System.arraycopy(event.values, 0, this.mMagValues, 0, event.values.length);
+                System.arraycopy(event.values, 0, mMagValues, 0, event.values.length);
                 //Log.i("onSensorChanged.MagneticField", event.values[STATE_NEW] + comma + event.values[STATE_RESUME] + comma + event.values[STATE_PAUSE] + ")");
             }
 
-            if (this.mAccValues != null && this.mMagValues != null)
+            if (mAccValues != null && mMagValues != null)
             {
                 //Log.i("onSensorChanged", "mAccValues = " + mAccValues.toString() + ", mMagValues = " + mMagValues.toString());
                 calculateOrientation();
-            } else
+            }
+            else
             {
                 if (mAccValues == null)
                 {
@@ -627,31 +587,31 @@ public class GameLogic implements SensorEventListener
 
     private void initGameObjects()
     {
-        mEye = new Eye(this.mContext);
+        mEye = new Eye(mContext);
     }
 
     private void initSound()
     {
-        this.mSoundMgr = new SoundMgr(mContext);
-        this.mSoundMgr.loadLoop(R.raw.beam_collide_sound, 0.5f);
-        this.mSoundMgr.loadLoop(R.raw.eye_sound, Eye.SPEED_FAST);
-        this.mSoundMgr.loadLoop(R.raw.saucer_beam, 0.7f);
-        this.mSoundMgr.loadSound(R.raw.appear_sound, 1.0f);
-        this.mSoundMgr.loadSound(R.raw.explosion_sound, 0.5f);
-        this.mSoundMgr.loadSound(R.raw.power_up_sound, 1.0f);
-        this.mSoundMgr.loadSound(R.raw.scream_sound, 1.0f);
+        mSoundMgr = new SoundMgr(mContext);
+        mSoundMgr.loadLoop(R.raw.beam_collide_sound, 0.5f);
+        mSoundMgr.loadLoop(R.raw.eye_sound, Eye.SPEED_FAST);
+        mSoundMgr.loadLoop(R.raw.saucer_beam, 0.7f);
+        mSoundMgr.loadSound(R.raw.appear_sound, 1.0f);
+        mSoundMgr.loadSound(R.raw.explosion_sound, 0.5f);
+        mSoundMgr.loadSound(R.raw.power_up_sound, 1.0f);
+        mSoundMgr.loadSound(R.raw.scream_sound, 1.0f);
     }
 
     private void noSensorError()
     {
-        new Builder(this.mContext)
+        new Builder(mContext)
                 .setTitle("No Orientation Sensor")
                 .setMessage("Your device does not seem to have an orientation sensor.  This game will not function without an technology.")
                 .setNegativeButton("Quit", new OnClickListener()
                 {
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        GameLogic.this.mContext.finish();
+                        mContext.finish();
                     }
                 })
                 .create()
@@ -660,34 +620,46 @@ public class GameLogic implements SensorEventListener
 
     private void resetGame()
     {
-        this.mGameSpace.removeAll();
+        mGameSpace.removeAll();
         loadNewLevel();
-        this.mSoundMgr.startLoop(R.raw.eye_sound);
+        mSoundMgr.startLoop(R.raw.eye_sound);
     }
 
+    //*** Informs UI listeners of changes to games state
+    //*** Must be called in UI thread - see informStateChangeSafe()
     private synchronized void informStateChange()
     {
-        Iterator it = this.mGameListeners.iterator();
+        Iterator it = mGameListeners.iterator();
         while (it.hasNext())
         {
             ((GameListener) it.next()).onStateChange();
         }
     }
 
+    //*** Informs UI listeners of changes to game state in the UI thread
     private synchronized void informStateChangeSafe()
     {
-        if (Thread.currentThread().equals(this.mMainThread))
+        if (Thread.currentThread().equals(mMainThread))
         {
             informStateChange();
-        } else
+        }
+        else
         {
-            this.mHandler.post(new StateChangePoster());
+            mHandler.post(new Runnable()
+            {
+                public void run()
+                {
+                    informStateChange();
+                }
+            });
         }
     }
 
+    //*** Informs objects in UI thread of changes to powerup state
+    //*** Must be called in UI thread - see informPowerupsChangesSafe()
     private synchronized void informPowerupsChanged()
     {
-        Iterator it = this.mGameListeners.iterator();
+        Iterator it = mGameListeners.iterator();
         while (it.hasNext())
         {
             ((GameListener) it.next()).onPowerupChange();
@@ -695,34 +667,52 @@ public class GameLogic implements SensorEventListener
         mEye.mReload = true;
     }
 
+    //*** Informs objects in UI thread of changes to powerup state in the UI thread
     private synchronized void informPowerupsChangedSafe()
     {
-        if (Thread.currentThread().equals(this.mMainThread))
+        if (Thread.currentThread().equals(mMainThread))
         {
             informPowerupsChanged();
-        } else
+        }
+        else
         {
-            this.mHandler.post(new PowerupChangePoster());
+            mHandler.post(new Runnable()
+            {
+                public void run()
+                {
+                    informPowerupsChanged();
+                }
+            });
         }
     }
 
+    //*** Informs objects in UI thread of changes to score state
+    //*** Must be called in UI thread - see informScoreChangeSafe()
     private synchronized void informScoreChange()
     {
-        Iterator it = this.mGameListeners.iterator();
+        Iterator it = mGameListeners.iterator();
         while (it.hasNext())
         {
             ((GameListener) it.next()).onScoreChange();
         }
     }
 
+    //*** Informs objects in UI thread of changes to score state in UI Thread
     private synchronized void informScoreChangeSafe()
     {
-        if (Thread.currentThread().equals(this.mMainThread))
+        if (Thread.currentThread().equals(mMainThread))
         {
             informScoreChange();
-        } else
+        }
+        else
         {
-            this.mHandler.post(new ScoreInformPoster());
+            mHandler.post(new Runnable()
+            {
+                public void run()
+                {
+                    informScoreChange();
+                }
+            });
         }
     }
 
@@ -735,17 +725,18 @@ public class GameLogic implements SensorEventListener
         updateAI();
         updateGraphics();
         updateSound();
-        this.mGameStateChanged = false;
+        mGameStateChanged = false;
     }
 
     private synchronized void updateState()
     {
-        if (!(this.mGameState == STATE_OVER || this.mGameLevel == null))
+        if (!(mGameState == STATE_OVER || mGameLevel == null))
         {
-            if (this.mGameLevel.saucersComplete() && this.mGameSpace.getSaucers().size() == 0)
+            if (mGameLevel.saucersComplete() && mGameSpace.getSaucers().size() == 0)
             {
                 setGameState(STATE_LEVEL_COMPLETE);
-            } else if (this.mGameSpace.getCities().size() == 0)
+            }
+            else if (mGameSpace.getCities().size() == 0)
             {
                 setGameState(STATE_OVER);
             }
@@ -754,37 +745,38 @@ public class GameLogic implements SensorEventListener
 
     private void updateScore()
     {
-        if (this.mGameLevel != null && this.mLastScore != this.mGameLevel.mScore)
+        if (mGameLevel != null && mLastScore != mGameLevel.mScore)
         {
-            this.mLastScore = this.mGameLevel.mScore;
+            mLastScore = mGameLevel.mScore;
             informScoreChangeSafe();
         }
     }
 
     private void updateInput()
     {
-        mEye.moveBeam(this.mOrientX, this.mOrientY, mStepMult);
-        this.mGameSpace.adjustSaucerOffset(this.mOrientX, this.mOrientY);
-        boolean collide = this.mGameSpace.collideBeam(mEye);
-        this.mCollideChanged = this.mCollide ^ collide;
-        this.mCollide = collide;
+        mEye.moveBeam(mOrientX, mOrientY, mStepMult);
+        mGameSpace.adjustSaucerOffset(mOrientX, mOrientY);
+        boolean collide = mGameSpace.collideBeam(mEye);
+        mCollideChanged = mCollide ^ collide;
+        mCollide = collide;
     }
 
     private synchronized void updatePowerups()
     {
-        if (this.mActivePowerup != null)
+        if (mActivePowerup != null)
         {
-            Powerup powerup = this.mActivePowerup;
+            Powerup powerup = mActivePowerup;
             Log.i("GameLogic.updatePowerups()", "\n***]n***\n*** mTimeLeft = " + powerup.mTimeLeft + "\n" +
                     "***]n***\n" +
                     "***\n");
             powerup.mTimeLeft = (int) (((float) powerup.mTimeLeft) - mTimeDiff);
-            if (this.mActivePowerup.mTimeLeft <= 0)
+            if (mActivePowerup.mTimeLeft <= 0)
             {
                 deactivatePowerup();
-            } else if (this.mActivePowerup.mType == 6)
+            }
+            else if (mActivePowerup.mType == 6)
             {
-                Iterator it = this.mGameSpace.getSaucers().iterator();
+                Iterator it = mGameSpace.getSaucers().iterator();
                 while (it.hasNext())
                 {
                     Saucer s = (Saucer) it.next();
@@ -797,82 +789,91 @@ public class GameLogic implements SensorEventListener
 
     private void updateAI()
     {
-        Vector<Saucer> saucerList = this.mGameSpace.getSaucers();
-        Vector<City> cityList = this.mGameSpace.getCities();
-        if (this.mGameLevel.mLimit > saucerList.size() && this.mGameLevel.saucerReady())
+        Vector<Saucer> saucerList = mGameSpace.getSaucers();
+        Vector<City> cityList = mGameSpace.getCities();
+        if (mGameLevel.mLimit > saucerList.size() && mGameLevel.saucerReady())
         {
-            Saucer s = this.mGameLevel.newSaucer();
+            Saucer s = mGameLevel.newSaucer();
             if (s != null)
             {
-                this.mGameSpace.addSaucer(s, true);
+                mGameSpace.addSaucer(s, true);
             }
         }
-        this.mGameSpace.updateState(this.mNewPowerups);
+        mGameSpace.updateState(mNewPowerups);
         addNewPowerups();
-        boolean attack = this.mGameSpace.areSaucersAttacking();
-        this.mSaucerAttackChanged = this.mSaucerAttack ^ attack;
-        this.mSaucerAttack = attack;
+        boolean attack = mGameSpace.areSaucersAttacking();
+        mSaucerAttackChanged = mSaucerAttack ^ attack;
+        mSaucerAttack = attack;
     }
 
     private void updateGraphics()
     {
-        this.mGameSurface.updateGraphics();
+        mGameSurface.updateGraphics();
     }
 
     private void updateSound()
     {
-        if (this.mCollideChanged || this.mSaucerAttackChanged)
+        if (mCollideChanged || mSaucerAttackChanged)
         {
-            if (this.mCollide)
+            if (mCollide)
             {
-                this.mSoundMgr.startLoop(R.raw.beam_collide_sound);
-            } else if (this.mSaucerAttack)
+                mSoundMgr.startLoop(R.raw.beam_collide_sound);
+            }
+            else if (mSaucerAttack)
             {
-                this.mSoundMgr.startLoop(R.raw.saucer_beam);
-            } else
+                mSoundMgr.startLoop(R.raw.saucer_beam);
+            }
+            else
             {
-                this.mSoundMgr.startLoop(R.raw.eye_sound);
+                mSoundMgr.startLoop(R.raw.eye_sound);
             }
         }
         int id = GameObject.getNextSound();
         if (id != STATE_UNINIT)
         {
-            this.mSoundMgr.playSound(id);
+            mSoundMgr.playSound(id);
         }
     }
 
     private void resumeMainLoop()
     {
-        if (this.mMainLoop == null)
+        if (mMainLoop == null)
         {
-            this.mMainLoop = new MainLoop();
-            this.mMainLoop.start();
+            mMainLoop = new MainLoop();
+            mMainLoop.start();
         }
     }
 
     private void pauseMainLoop()
     {
-        if (this.mMainLoop != null)
+        if (mMainLoop != null)
         {
-            this.mMainLoop.requestExitAndWait();
-            this.mMainLoop = null;
+            mMainLoop.requestExitAndWait();
+            mMainLoop = null;
         }
     }
 
     private void pauseMainLoopSafe()
     {
-        if (Thread.currentThread().equals(this.mMainThread))
+        if (Thread.currentThread().equals(mMainThread))
         {
             pauseMainLoop();
-        } else
+        }
+        else
         {
-            this.mHandler.post(new PauseGamePoster());
+            mHandler.post(new Runnable()
+            {
+                public void run()
+                {
+                    pauseMainLoop();
+                }
+            });
         }
     }
 
     private void loadLevel(GameLevel level, boolean newLevel)
     {
-        this.mGameLevel = level;
+        mGameLevel = level;
         loadMap(newLevel);
     }
 
@@ -880,61 +881,70 @@ public class GameLogic implements SensorEventListener
     {
         try
         {
-            loadLevel(new GameLevel(new JSONObject(this.mContext.getResources().getString(this.mContext.getResources().getIdentifier("base_level", "string", "com.burtonshead.burningeye")))), true);
-        } catch (Exception e)
+            loadLevel(new GameLevel(new JSONObject(mContext.getResources()
+                    .getString(mContext.getResources().getIdentifier("base_level", "string", "com.burtonshead.burningeye")))), true);
+        }
+        catch (Exception e)
         {
             Exception x = e;
-            this.mContext.finish();
+            mContext.finish();
         }
         mEye.recenter();
     }
 
     private void loadNextLevel()
     {
-        this.mGameSpace.restoreCities();
+        mGameSpace.restoreCities();
         mEye.recenter();
-        this.mGameLevel.advanceLevel();
-        if (this.mGameLevel.getZoneChange())
+        mGameLevel.advanceLevel();
+        if (mGameLevel.getZoneChange())
         {
-            this.mGameSpace.removeAll();
+            mGameSpace.removeAll();
             loadMap(true);
             return;
         }
-        this.mGameSpace.removeAllSaucers();
+        mGameSpace.removeAllSaucers();
     }
 
     private void loadMap(boolean newCities)
     {
-        this.mMap = new Map(this.mGameLevel.getGameZone());
-        this.mGameSurface.setMapImg(this.mMap.getMapResID());
+        mMap = new Map(mGameLevel.getGameZone());
+        mGameSurface.setMapImg(mMap.getMapResID());
         if (newCities)
         {
-            this.mGameSpace.removeAllCities();
-            this.mGameSpace.addCities(this.mMap.getCityLocs());
-        }
-    }
-
-    private void processScoreSafe()
-    {
-        long score = this.mGameLevel != null ? this.mGameLevel.mScore : 0;
-        if (Thread.currentThread().equals(this.mMainThread))
-        {
-            processScore(score);
-        } else
-        {
-            this.mHandler.post(new ProcessScorePoster(score));
+            mGameSpace.removeAllCities();
+            mGameSpace.addCities(mMap.getCityLocs());
         }
     }
 
     private void processScore(long score)
     {
-        App app = App.mInstance;
         Vector<HighScore> highScores = App.getSettings().getHighScores();
         if (highScores.size() == 0 || score >= ((HighScore) highScores.lastElement()).score)
         {
-            Intent i = new Intent(this.mContext, ScoreScreen.class);
+            Intent i = new Intent(mContext, ScoreScreen.class);
             i.putExtra(ScoreScreen.NEW_HIGH_SCORE_EXTRA, score);
-            this.mContext.startActivity(i);
+            mContext.startActivity(i);
         }
     }
+
+    private void processScoreSafe()
+    {
+        final long score = mGameLevel != null ? mGameLevel.mScore : 0;
+        if (Thread.currentThread().equals(mMainThread))
+        {
+            processScore(score);
+        }
+        else
+        {
+            mHandler.post(new Runnable()
+            {
+                public void run()
+                {
+                    processScore(score);
+                }
+            });
+        }
+    }
+
 }
