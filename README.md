@@ -12,3 +12,6 @@ The original code for this project was lost, so I had to decompile it from an AP
 - Use of fragments - entirely absent in the current version.  Should probably combine the non-game-play screens and use fragments
 
 # Changes
+- 03/07/2016
+-   Tidying up ugly constants and refactoring a bit inside GameLogic.java.
+-   Refactored several internal classes inside Gamelogic.java.
