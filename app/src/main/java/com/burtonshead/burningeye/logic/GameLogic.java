@@ -31,13 +31,12 @@ import com.burtonshead.burningeye.gamespace.GameSpace;
 import com.burtonshead.burningeye.gamespace.Saucer;
 import com.burtonshead.burningeye.powerup.Powerup;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.json.JSONObject;
 
 import java.util.Iterator;
 import java.util.Vector;
 
-public class GameLogic implements SensorEventListener
+public class GameLogic
 {
     public static final int STATE_LEVEL_COMPLETE = 4;
     public static final int STATE_NEW = 0;
@@ -52,10 +51,6 @@ public class GameLogic implements SensorEventListener
 
     public static float mStepMult;
     public static float mTimeDiff;
-
-    public float mOrientX;
-    public float mOrientY;
-    public float mOrientZ;
 
     public Activity mContext;
     public Map mMap;
@@ -74,16 +69,6 @@ public class GameLogic implements SensorEventListener
         mGameState = STATE_UNINIT;
         mGameStateChanged = false;
         mGameListeners = new Vector<>();
-
-        mOrientX = 0.0f;
-        mOrientY = 0.0f;
-        mOrientZ = 0.0f;
-
-        mAccValues = new float[3];
-        mMagValues = new float[3];
-        mOrientationRotationMatrix = new float[9];
-        mOrientationTransformMatrix = new float[9];
-        mOrientationResult = new float[3];
 
         mCurrentTime = 0;
         mLastTime = 0;
@@ -106,8 +91,6 @@ public class GameLogic implements SensorEventListener
 
         Display display = mContext.getWindowManager().getDefaultDisplay();
 
-        mRotation = display.getRotation();
-
         mMetrics = new DisplayMetrics();
         display.getMetrics(mMetrics);
         int h = mMetrics.heightPixels;
@@ -115,19 +98,8 @@ public class GameLogic implements SensorEventListener
 
         mGameSurface = g;
         mGameSpace = new GameSpace((float) h, (float) w);
-        try
-        {
-            mSensorMgr = (SensorManager) mContext.getSystemService("sensor");
-            Sensor accSensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            Sensor magSensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-            mSensorMgr.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_GAME);
-            mSensorMgr.registerListener(this, magSensor, SensorManager.SENSOR_DELAY_GAME);
-        }
-        catch (Exception e)
-        {
-            Exception x = e;
-            noSensorError();
-        }
+
+        mTiltMgr = new TiltManager((Activity)mContext);
 
         setMainThread();
 
@@ -480,60 +452,14 @@ public class GameLogic implements SensorEventListener
         mHandler = new Handler();
     }
 
-    public void onAccuracyChanged(Sensor arg0, int arg1)
-    {
-    }
-
-    /**
-     * Captures Accelerometer and Magnetometer to get values
-     * needed to determine device tilt
-     * @param event
-     */
-    public void onSensorChanged(SensorEvent event)
-    {
-        final String comma = ", ";
-        if (event.accuracy != 0)
-        {
-            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-            {
-                System.arraycopy(event.values, 0, mAccValues, 0, event.values.length);
-                //Log.i("onSensorChanged.Accelerometer", event.values[0] + comma + event.values[STATE_RESUME] + comma + event.values[STATE_PAUSE] + ")");
-            }
-
-            if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-            {
-                System.arraycopy(event.values, 0, mMagValues, 0, event.values.length);
-                //Log.i("onSensorChanged.MagneticField", event.values[STATE_NEW] + comma + event.values[STATE_RESUME] + comma + event.values[STATE_PAUSE] + ")");
-            }
-
-            if (mAccValues != null && mMagValues != null)
-            {
-                //Log.i("onSensorChanged", "mAccValues = " + mAccValues.toString() + ", mMagValues = " + mMagValues.toString());
-                calculateOrientation();
-            }
-            else
-            {
-                if (mAccValues == null)
-                {
-                    //Log.i("GameLogic.onSensorChanged", "\n\n\n ACCELEROMETER NULL \n\n\n");
-                }
-                if (mMagValues == null)
-                {
-                    //Log.i("GameLogic.onSensorChanged", "\n\n\n MAGNEMOMETER NULL \n\n\n");
-                }
-            }
-            //Log.i("onSensorChanged", "*** mOrientX = " + mOrientX + ", mOrientY = " + mOrientY + ", mOrientZ = " + mOrientZ + "***");
-        }
-    }
-
 
     //*** NON-PUBLIC ***
 
     private static final float TICK = 33.0f;
     private static float mSpeedMult;
 
-    private final int mRotation;   // tablets and phones have different rotation settings - which reverses X/Y coordinates
-    private float[] mAccValues;    // Acclerometer values for Orientation calculation
+    private TiltManager mTiltMgr;
+
     private GameArchive mArchive;  // Storage archive for game state
     private boolean mCollide;      // Collision in progress?
     private boolean mCollideChanged;   // Collision state changing?
@@ -547,17 +473,12 @@ public class GameLogic implements SensorEventListener
     private Handler mHandler;      // Handler used to process Runnables on the UI thread
     private long mLastScore;       // Most recent score
     private long mLastTime;        // Time before the Current Time (need last two values)
-    private float[] mMagValues;    // Magnetometer values for current Orientation calculation
     private MainLoop mMainLoop;    // Main game loop object - runs in its own thread
     private Thread mMainThread;    // Main thread within the game loop
     private Vector<Powerup> mNewPowerups;  // List of newly acquired Powerups
-    private float[] mOrientationResult;    // Intermediate values used to determine Orientation - stored once for memory efficiency
-    private float[] mOrientationRotationMatrix;    // Intermediate values used to determine Orientation - stored once for memory efficiency
-    private float[] mOrientationTransformMatrix;   // Intermediate values used to determine Orientation - stored once for memory efficiency
     private Vector<Powerup> mPowerups;     //List of currently available acquired Powerups
     private boolean mSaucerAttack;         // Is any saucer in a state of attack (to adjust sound)
     private boolean mSaucerAttackChanged;  // Has the state of attack of any saucer just changed
-    private SensorManager mSensorMgr;      // Used to calculate Orientation for tilt
     private SoundMgr mSoundMgr;            // Plays sound effects
 
 
@@ -621,56 +542,11 @@ public class GameLogic implements SensorEventListener
         mSoundMgr.loadSound(R.raw.scream_sound, 1.0f);
     }
 
-    private void noSensorError()
-    {
-        new Builder(mContext)
-                .setTitle("No Orientation Sensor")
-                .setMessage("Your device does not seem to have an orientation sensor.  This game will not function without this technology.")
-                .setNegativeButton("Quit", new OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        mContext.finish();
-                    }
-                })
-                .create()
-                .show();
-    }
-
     private void resetGame()
     {
         mGameSpace.removeAll();
         loadNewLevel();
         mSoundMgr.startLoop(R.raw.eye_sound);
-    }
-
-    /**
-     * Determines the X/Y tilt of the device from a flat position
-     */
-    private void calculateOrientation()
-    {
-        try
-        {
-            SensorManager.getOrientation(mOrientationRotationMatrix, mOrientationResult);
-            SensorManager.getRotationMatrix(mOrientationRotationMatrix, null, mAccValues, mMagValues);
-            SensorManager.remapCoordinateSystem(mOrientationRotationMatrix, 0, 180, mOrientationTransformMatrix);
-            mOrientY = (float) Math.toDegrees((double) mOrientationResult[2]);
-            mOrientZ = (float) (-Math.toDegrees((double) mOrientationResult[0]));
-            mOrientX = (float) -Math.toDegrees((double) mOrientationResult[1]);
-
-            if (mRotation == Surface.ROTATION_0)
-            {
-                float x = mOrientY;
-                mOrientY = -mOrientX;
-                mOrientX = x;
-            }
-
-        }
-        catch (Exception x)
-        {
-            Log.e("calcOrientation", "\n\n Problem calculating orientation \n\n", x);
-        }
-        //Log.i("calculateOrientation", "*** mOrientX = " + mOrientX + ", mOrientY = " + mOrientY + ", mOrientZ = " + mOrientZ + "***");
     }
 
     /**
@@ -807,8 +683,8 @@ public class GameLogic implements SensorEventListener
 
     private void updateInput()
     {
-        mEye.moveBeam(mOrientX, mOrientY, mStepMult);
-        mGameSpace.adjustSaucerOffset(mOrientX, mOrientY);
+        mEye.moveBeam(mTiltMgr.getOrientX(), mTiltMgr.getOrientY(), mStepMult);
+        mGameSpace.adjustSaucerOffset(mTiltMgr.getOrientX(), mTiltMgr.getOrientY());
         boolean collide = mGameSpace.collideBeam(mEye);
         mCollideChanged = mCollide ^ collide;
         mCollide = collide;
