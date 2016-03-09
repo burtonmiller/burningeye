@@ -65,16 +65,12 @@ public class App extends Application
         // determine scale factor
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
-        //mScaleFactor = 1;
-
-        mScaleFactor = (mScreenHeight / (320f * metrics.density));
 
         // determine target bitmap density
-
         mTargetBitmapDensity = mScreenHeight * SCALE_CONSTANT;
 
-        int x = 0;
-        int y = x;
+        // determine scaling for other operations (not bitmaps)
+        mScaleFactor = mTargetBitmapDensity / metrics.densityDpi;
     }
 
     public void onTerminate()
@@ -111,13 +107,9 @@ public class App extends Application
         return mScreenHeight;
     }
 
-    public float getBitmapScale(Bitmap b)
+    public static float getScaleFactor()
     {
-        int bitmapDensity = b.getDensity();
-
-        float scale = SCALE_CONSTANT / (bitmapDensity/mScreenHeight);
-
-        return scale;
+        return mScaleFactor;
     }
 
     public Bitmap getBitmap(int resID)
@@ -147,25 +139,17 @@ public class App extends Application
 
         Bitmap b = BitmapFactory.decodeResource(getResources(), resID, options);
 
-//        float scale = getBitmapScale(b);
-//
-//        // if bitmap is within tolerance, do not scale
-//        if (scale < (1 + SCALE_TOLERANCE) && scale > (1 - SCALE_TOLERANCE))
-//        {
-//            return b;
-//        }
-//
-//        // scale the bitmap to fit the device
-//        Bitmap sb = Bitmap.createScaledBitmap(b, (int) (b.getWidth() * scale), (int) (b.getHeight() * scale), true);
-//
-//        // cleanup original bitmap
-//        b.recycle();
-//
-//        return sb;
-
         return b;
-
     }
+
+//    public float getBitmapScale(Bitmap b)
+//    {
+//        int bitmapDensity = b.getDensity();
+//
+//        float scale = SCALE_CONSTANT / (bitmapDensity/mScreenHeight);
+//
+//        return scale;
+//    }
 
 //    private Bitmap scaleBitmapforScreen(int resID)
 //    {

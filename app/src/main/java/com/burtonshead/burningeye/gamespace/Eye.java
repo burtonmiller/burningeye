@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
-import android.util.Log;
+
 import com.burtonshead.burningeye.App;
 import com.burtonshead.burningeye.R;
 import com.burtonshead.burningeye.logic.GameLogic;
@@ -100,7 +100,7 @@ public class Eye {
 
     public void setBeamType(int t) {
         this.mBeamType = t;
-        this.mRadius = BEAM_RADIUS[this.mBeamType];
+        this.mRadius = BEAM_RADIUS[this.mBeamType] * App.getScaleFactor(); //???
         this.mRadiusScale = BEAM_RADIUS[this.mBeamType] / BEAM_RADIUS[BEAM_NORMAL];
         this.mDamage = BEAM_DMG[this.mBeamType];
         loadEyeBitmaps();
@@ -188,11 +188,11 @@ public class Eye {
                 break;
         }
         int dim = (int) (this.mRadius * 4.0f);
-        for (i = BEAM_NORMAL; i < temp.length; i += BEAM_SHOCK) {
+        for (i = 0; i < temp.length; i++) {
             this.mFocusBitmaps[i] = Bitmap.createScaledBitmap(temp[i], dim, dim, true);
             App.mInstance.releaseBitmap(temp[i]);
         }
-        for (i = BEAM_NORMAL; i < oldBitmaps.length; i += BEAM_SHOCK) {
+        for (i = 0; i < oldBitmaps.length; i++) {
             if (oldBitmaps[i] != null) {
                 oldBitmaps[i].recycle();
             }
