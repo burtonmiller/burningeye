@@ -36,7 +36,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 import java.util.Vector;
 
-public class GameLogic
+public class GameLogic implements TiltManager.TiltCalibrationListener
 {
     public static final int STATE_LEVEL_COMPLETE = 4;
     public static final int STATE_NEW = 0;
@@ -452,6 +452,16 @@ public class GameLogic
         mHandler = new Handler();
     }
 
+    public void onTiltFail()
+    {
+        setGameState(STATE_PAUSE);
+        informStateChangeSafe();
+    }
+
+    public void onTiltOK()
+    {
+    }
+
 
     //*** NON-PUBLIC ***
 
@@ -480,6 +490,7 @@ public class GameLogic
     private boolean mSaucerAttack;         // Is any saucer in a state of attack (to adjust sound)
     private boolean mSaucerAttackChanged;  // Has the state of attack of any saucer just changed
     private SoundMgr mSoundMgr;            // Plays sound effects
+
 
 
     private class MainLoop extends Thread
