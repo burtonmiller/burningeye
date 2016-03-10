@@ -15,3 +15,8 @@ The original code for this project was lost, so I had to decompile it from an AP
 - 03/07/2016
 -   Tidying up ugly constants and refactoring a bit inside GameLogic.java.
 -   Refactored several internal classes inside Gamelogic.java.
+03/10/2016
+- Tilt/Orientation cleanup more, with calibration error handling
+- Colors and fonts fixed and touched up
+- TextViews animated
+
