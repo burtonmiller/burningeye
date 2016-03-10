@@ -34,17 +34,17 @@ public class UpgradeScreen extends GameActivity {
     }
 
     public void onCreate(Bundle savedInstanceState) {
-        String str = "fonts/add_city_electric.ttf";
+        String str = "fonts/white_rabbit.ttf";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.upgrade_screen);
         init(R.drawable.story_bkg);
         this.mBackButton = (TextView) findViewById(R.id.story_back_button);
         this.mBackButton.setOnClickListener(new C00351());
-        String str2 = "fonts/add_city_electric.ttf";
+        String str2 = "fonts/white_rabbit.ttf";
         this.mBackButton.setTypeface(Typeface.createFromAsset(getAssets(), str));
         this.mUpgradeButton = (TextView) findViewById(R.id.upgrade_button);
         this.mUpgradeButton.setOnClickListener(new C00362());
-        str2 = "fonts/add_city_electric.ttf";
+        str2 = "fonts/white_rabbit.ttf";
         this.mUpgradeButton.setTypeface(Typeface.createFromAsset(getAssets(), str));
         Typeface smallFont = Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf");
         ((TextView) findViewById(R.id.bullet_1)).setTypeface(smallFont);

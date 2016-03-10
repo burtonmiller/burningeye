@@ -45,7 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:animateLayoutChanges="true">
 
         <TextView
             android:id="@id/play_button"
@@ -58,7 +59,8 @@
             android:textColor="@drawable/text_button"
             android:textSize="48.0sp"
             android:textStyle="bold"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            android:animateLayoutChanges="false"/>
 
         <TextView
             android:id="@id/resume_button"

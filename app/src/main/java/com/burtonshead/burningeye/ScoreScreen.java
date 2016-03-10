@@ -61,7 +61,7 @@ public class ScoreScreen extends GameActivity {
         setContentView(R.layout.score_screen);
         init(R.drawable.score_bkg);
         this.mBackButton = (TextView) findViewById(R.id.score_back_button);
-        this.mBackButton.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/add_city_electric.ttf"));
+        this.mBackButton.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf"));
         this.mBackButton.setOnClickListener(new C00301());
         this.mScoreTable = (TableLayout) findViewById(R.id.score_table);
         DisplayMetrics metrics = new DisplayMetrics();

@@ -195,7 +195,7 @@ public class GameScreen extends GameActivity {
         mGameListener = new C00131();
         mGameLogic.addGameListener(mGameListener);
         Typeface smallFont = Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf");
-        Typeface controlFont = Typeface.createFromAsset(getAssets(), "fonts/add_city_electric.ttf");
+        Typeface controlFont = Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf");
         mWaveText = (TextView) findViewById(R.id.wave_text);
         mWaveText.setTypeface(controlFont);
         mScore = (TextView) findViewById(R.id.score);
@@ -234,52 +234,52 @@ public class GameScreen extends GameActivity {
 
     private void gameStateChanged() {
         switch (mGameLogic.getGameState()) {
-            case FastDateFormat.LONG /*1*/:
+            case GameLogic.STATE_RESUME:
                 showBkgImage(false);
                 App.mInstance.pauseBkgMusic();
-                mGameSurface.setVisibility(0);
-                mControls.setVisibility(8);
-                mLevelControls.setVisibility(8);
+                mGameSurface.setVisibility(View.VISIBLE);
+                mControls.setVisibility(View.GONE);
+                mLevelControls.setVisibility(View.GONE);
                 showPowerups(true);
                 break;
-            case FastDateFormat.MEDIUM /*2*/:
+            case GameLogic.STATE_PAUSE:
                 App.mInstance.playBkgMusic();
-                mControls.setVisibility(0);
-                mPlayButton.setVisibility(8);
-                mResumeButton.setVisibility(0);
-                mExitButton.setVisibility(0);
-                mLevelControls.setVisibility(8);
+                mControls.setVisibility(View.VISIBLE);
+                mPlayButton.setVisibility(View.GONE);
+                mResumeButton.setVisibility(View.VISIBLE);
+                mExitButton.setVisibility(View.VISIBLE);
+                mLevelControls.setVisibility(View.GONE);
                 showPowerups(false);
                 break;
-            case FastDateFormat.SHORT /*3*/:
+            case GameLogic.STATE_OVER:
                 App.mInstance.playBkgMusic();
-                mGameSurface.setVisibility(8);
-                mControls.setVisibility(0);
-                mPlayButton.setVisibility(0);
-                mResumeButton.setVisibility(8);
-                mExitButton.setVisibility(8);
-                mLevelControls.setVisibility(8);
+                mGameSurface.setVisibility(View.GONE);
+                mControls.setVisibility(View.VISIBLE);
+                mPlayButton.setVisibility(View.GONE); //???
+                mResumeButton.setVisibility(View.GONE);
+                mExitButton.setVisibility(View.GONE);
+                mLevelControls.setVisibility(View.GONE);
                 showPowerups(false);
                 break;
-            case DateUtils.RANGE_WEEK_CENTER /*4*/:
+            case GameLogic.STATE_LEVEL_COMPLETE:
                 if (App.getProps().getGameType() != 0 && mGameLogic.getWaveCount() >= 15) {
                     startActivity(new Intent(this, UpgradeScreen.class));
                     finish();
                     break;
                 }
                 App.mInstance.pauseBkgMusic();
-                mControls.setVisibility(8);
-                mLevelControls.setVisibility(0);
+                mControls.setVisibility(View.GONE);
+                mLevelControls.setVisibility(View.VISIBLE);
                 mWaveText.setText("Wave " + mGameLogic.getWaveCount() + " Complete");
                 showPowerups(false);
                 break;
             default:
-                mGameSurface.setVisibility(8);
-                mControls.setVisibility(0);
-                mLevelControls.setVisibility(8);
-                mPlayButton.setVisibility(0);
+                mGameSurface.setVisibility(View.GONE);
+                mControls.setVisibility(View.VISIBLE);
+                mLevelControls.setVisibility(View.GONE);
+                mPlayButton.setVisibility(View.VISIBLE);
                 mResumeButton.setVisibility(GameLogic.mInstance.hasSavedGame() ? 0 : 8);
-                mExitButton.setVisibility(8);
+                mExitButton.setVisibility(View.GONE);
                 showPowerups(false);
                 break;
         }
@@ -298,10 +298,10 @@ public class GameScreen extends GameActivity {
         int size = powerups.size();
         for (int i = 0; i < 4; i++) {
             if (i >= size) {
-                mPowerupButtons[i].setVisibility(8);
+                mPowerupButtons[i].setVisibility(View.GONE);
             } else {
                 mPowerupButtons[i].setBackgroundDrawable(getResources().getDrawable(((Powerup) powerups.get(i)).getDrawableID()));
-                mPowerupButtons[i].setVisibility(0);
+                mPowerupButtons[i].setVisibility(View.VISIBLE);
             }
         }
     }

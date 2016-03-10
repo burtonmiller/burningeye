@@ -112,7 +112,7 @@ public class TutorialScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tutorial_screen);
         this.mBackButton = (TextView) findViewById(R.id.tutorial_back_button);
-        this.mBackButton.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/add_city_electric.ttf"));
+        this.mBackButton.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf"));
         this.mBackButton.setOnClickListener(new C00342());
         this.mGallery = (Gallery) findViewById(R.id.tutorial_gallery);
         this.mGallery.setAdapter(new TutorialAdapter(this));

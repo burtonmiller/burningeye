@@ -100,6 +100,7 @@ public class GameLogic implements TiltManager.TiltCalibrationListener
         mGameSpace = new GameSpace((float) h, (float) w);
 
         mTiltMgr = new TiltManager((Activity)mContext);
+        mTiltMgr.addTiltCalibrationListener(this);
 
         setMainThread();
 
@@ -454,12 +455,18 @@ public class GameLogic implements TiltManager.TiltCalibrationListener
 
     public void onTiltFail()
     {
-        setGameState(STATE_PAUSE);
-        informStateChangeSafe();
+        Log.i("GameLogic", "OnTiltFail - GameState = " + getGameState());
+
+        if (getGameState() == STATE_RESUME)
+        {
+            setGameState(STATE_PAUSE);
+            informStateChangeSafe();
+        }
     }
 
     public void onTiltOK()
     {
+        // do nothing - user can unpause on his own
     }
 
 
@@ -727,6 +734,11 @@ public class GameLogic implements TiltManager.TiltCalibrationListener
 
     private void updateAI()
     {
+        if (mGameLevel == null)
+        {
+             return; //??? mGameLevel is very occasionally null when resuming an old game...
+        }
+
         Vector<Saucer> saucerList = mGameSpace.getSaucers();
         Vector<City> cityList = mGameSpace.getCities();
         if (mGameLevel.mLimit > saucerList.size() && mGameLevel.saucerReady())

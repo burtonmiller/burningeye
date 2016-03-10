@@ -27,7 +27,7 @@ public class StoryScreen extends GameActivity {
         init(R.drawable.story_bkg);
         this.mBackButton = (TextView) findViewById(R.id.story_back_button);
         this.mBackButton.setOnClickListener(new C00321());
-        this.mBackButton.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/add_city_electric.ttf"));
+        this.mBackButton.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf"));
         Typeface storyFont = Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf");
         ((TextView) findViewById(R.id.story_1)).setTypeface(storyFont);
         ((TextView) findViewById(R.id.story_2)).setTypeface(storyFont);
