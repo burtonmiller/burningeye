@@ -736,7 +736,7 @@ public class GameLogic implements TiltManager.TiltCalibrationListener
     {
         if (mGameLevel == null)
         {
-             return; //??? mGameLevel is very occasionally null when resuming an old game...
+            loadNewLevel();
         }
 
         Vector<Saucer> saucerList = mGameSpace.getSaucers();
