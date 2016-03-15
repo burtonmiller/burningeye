@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<familyset>
+
+    <family>
+        <nameset>
+            <name>white_rabbit</name>
+        </nameset>
+        <fileset>
+            <file>white_rabbit.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>add_city_electric</name>
+        </nameset>
+        <fileset>
+            <file>add_city_electric.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>acidic</name>
+        </nameset>
+        <fileset>
+            <file>acidic.ttf</file>
+        </fileset>
+    </family>
+
+</familyset>  
