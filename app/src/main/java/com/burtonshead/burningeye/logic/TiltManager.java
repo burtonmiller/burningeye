@@ -80,6 +80,12 @@ public class TiltManager implements SensorEventListener
                     break;
             }
 
+            // clear calibration dialog
+            if (sensor == mMagSensor && mDialog != null)
+            {
+                mDialog.dismiss();
+            }
+
             // inform tilt listeners
             reportTiltOK();
         }
