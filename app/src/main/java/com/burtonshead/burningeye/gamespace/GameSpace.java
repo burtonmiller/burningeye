@@ -413,8 +413,8 @@ public class GameSpace
 
     void randomLocation(FPoint p, float radius)
     {
-        p.x = (float) ((Math.random() * ((double) (this.mWidth - (radius * Eye.Y_TOLERANCE)))) + ((double) radius));
-        p.y = (float) ((Math.random() * ((double) (this.mHeight - (radius * Eye.Y_TOLERANCE)))) + ((double) radius));
+        p.x = (float) ((Math.random() * ((double) (this.mWidth - ((radius) * Eye.X_TOLERANCE)))) + ((double) radius));
+        p.y = (float) ((Math.random() * ((double) (this.mHeight - ((radius * 3) * Eye.Y_TOLERANCE)))) + ((double) radius)); //??? radius * 3
     }
 
     static float distance(float x1, float y1, float r1, float x2, float y2, float r2)
