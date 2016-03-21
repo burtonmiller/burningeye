@@ -10,6 +10,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
@@ -302,7 +303,7 @@ public class GameSurface extends SurfaceView implements Callback
         this.mCanvas.drawBitmap(this.mEyeOverlay, this.mXEyeOverlayPos, this.mYEyeOverlayPos, this.mBkgPaint);
     }
 
-    private void drawEyeBeam()
+    private void drawEyeBeamWorking()
     {
         if (this.mEye.mReload)
         {
@@ -342,6 +343,68 @@ public class GameSurface extends SurfaceView implements Callback
         this.mFocusIndex = (this.mFocusIndex + 1) % 4;
         this.mDefaultPaint.setColor(-1);
     }
+
+    private void drawEyeBeam()
+    {
+        if (mEye.mReload)
+        {
+            mEye.mReload = false;
+            loadBeamBitmaps();
+        }
+
+        float focusOffset = mEye.mRadius * 2f;
+
+        float x = mXEye + mEyeCenterXOffset;
+        float y = mYEye + mEyeCenterYOffset;
+        float width = 100.0f * mMetrics.density;
+        //width = 100f * App.getScaleFactor(); //???
+        y -= mCenterBeamOffset;
+        float beamX = mEye.mBeamX;
+        float beamY = mEye.mBeamY - mEye.mRadius;
+        float a = (float) Math.hypot((double) (x - beamX), (double) (y - beamY));
+        float b = width;
+        float c = (float) Math.hypot((double) (beamX - (x + width)), (double) (beamY - y));
+        float angle = (float) Math.toDegrees(Math.acos((double) ((((a * a) + (b * b)) - (c * c)) / ((Eye.Y_TOLERANCE * a) * b))));
+        if (beamY < y)
+        {
+            angle *= -1.0f;
+        }
+        // pick a random bitmap from the beam bitmaps
+        int beamIndex = (int) (Math.random() * 6.0d);
+
+        // scale the width
+        mScaledBeamBitmap.eraseColor(0);
+        Canvas canvas = mScaledBeamCanvas;
+        int beamHeight = mBeamBitmaps[beamIndex].getHeight();
+        int beamWidth = mBeamBitmaps[beamIndex].getWidth();
+        int newBeamHeight = (int) (mEye.mRadius * 2);
+        int newBeamWidth = (int) Math.max(1, a);
+        Log.i("GameSurface", "drawEyeBeam: w = " + beamWidth + ", h = " + beamHeight + ", nw = " + newBeamWidth + ", nh = " + newBeamHeight);
+        if (beamWidth != newBeamWidth || beamHeight != newBeamHeight)
+        {
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap
+                    (mBeamBitmaps[beamIndex], newBeamWidth, newBeamHeight, true);
+            canvas.drawBitmap(resizedBitmap, 0, 0, mDefaultPaint);
+            resizedBitmap.recycle();
+        }
+        else
+        {
+            canvas.drawBitmap(mBeamBitmaps[beamIndex], 0, 0, mDefaultPaint);
+        }
+
+        mOffsetMatrix.setTranslate(x, y);
+        mBeamMatrix.setRotate(angle, 0.0f, mCenterBeamOffset);
+        mBeamMatrix.setConcat(mOffsetMatrix, mBeamMatrix);
+        mCanvas.drawBitmap(mScaledBeamBitmap, mBeamMatrix, mDefaultPaint);
+
+        canvas = mCanvas;
+        int i = mFocusIndex;
+        Eye eye = mEye;
+        canvas.drawBitmap(mFocusBitmaps[i], eye.mBeamX - focusOffset, eye.mBeamY - focusOffset, mDefaultPaint);
+        mFocusIndex = (mFocusIndex + 1) % 4;
+        mDefaultPaint.setColor(-1);
+    }
+
 
     private void drawCities()
     {
