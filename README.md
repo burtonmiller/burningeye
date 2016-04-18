@@ -15,8 +15,18 @@ The original code for this project was lost, so I had to decompile it from an AP
 - 03/07/2016
 -   Tidying up ugly constants and refactoring a bit inside GameLogic.java.
 -   Refactored several internal classes inside Gamelogic.java.
+
 03/10/2016
 - Tilt/Orientation cleanup more, with calibration error handling
 - Colors and fonts fixed and touched up
 - TextViews animated
+
+04/18/2016
+- (Changes in this round are from user testing)
+- Modified saucer seek algorithm to make game more difficult as number of cities decreases (a lot more difficult)
+- Added graphic and more text to calibration dialog, and removed OK button.  It will keep you there until the calibration is complete.
+- Settings screen added to control music and fx volume, which can be annoying
+- Put in longer background music loop with more variety (wouldn't work on the G1 - took too much memory!)
+
+
 

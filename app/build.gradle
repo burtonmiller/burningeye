@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        be_config {
+            keyAlias 'burningeye'
+            keyPassword '6441baal'
+            storeFile file('/Users/burton/Development/projects/volatilecode/volatilecode.keystore')
+            storePassword '6441baal'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
-
     defaultConfig {
         applicationId "com.burtonshead.burningeye"
         minSdkVersion 17
