@@ -16,6 +16,7 @@ public class MainScreen extends GameActivity
     private TextView mStoryButton;
     private TextView mTutorialButton;
     private TextView mUpgradeButton;
+    private TextView mSettingsButton;
 
     /* renamed from: com.burtonshead.burningeye.MainScreen.1 */
     class C00221 implements OnClickListener
@@ -95,6 +96,19 @@ public class MainScreen extends GameActivity
         }
     }
 
+    /* renamed from: com.burtonshead.burningeye.MainScreen.6 */
+    class SettingsListener implements OnClickListener
+    {
+        SettingsListener()
+        {
+        }
+
+        public void onClick(View v)
+        {
+            MainScreen.this.startActivity(new Intent(MainScreen.this.getApplicationContext(), SettingsScreen.class));
+        }
+    }
+
 
     public void onCreate(Bundle savedInstanceState)
     {
@@ -108,6 +122,7 @@ public class MainScreen extends GameActivity
         mScoreButton = (TextView) findViewById(R.id.score_button);
         mAboutButton = (TextView) findViewById(R.id.about_button);
         mUpgradeButton = (TextView) findViewById(R.id.upgrade_button);
+        mSettingsButton = (TextView) findViewById(R.id.settings_button);
         if (App.getProps().getGameType() == 0)
         {
             mUpgradeButton.setVisibility(View.GONE);
@@ -125,12 +140,13 @@ public class MainScreen extends GameActivity
         mScoreButton.setOnClickListener(new C00254());
         mAboutButton.setOnClickListener(new C00265());
         mUpgradeButton.setOnClickListener(new C00276());
+        mSettingsButton.setOnClickListener(new SettingsListener());
     }
 
     public void onPause()
     {
         showBkgImage(false);
-        App.mInstance.pauseBkgMusic();
+        App.sApp.pauseBkgMusic();
         System.gc();
         super.onPause();
     }
@@ -139,6 +155,6 @@ public class MainScreen extends GameActivity
     {
         showBkgImage(true);
         super.onResume();
-        App.mInstance.playBkgMusic();
+        App.sApp.playBkgMusic();
     }
 }

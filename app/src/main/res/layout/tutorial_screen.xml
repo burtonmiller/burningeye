@@ -20,7 +20,7 @@
         android:layout_margin="8.0dip"
         android:shadowColor="#ff000000"
         android:shadowRadius="6.0"
-        android:text="MAIN"
+        android:text="&lt;"
         android:textColor="@drawable/text_button"
         android:textSize="36.0sp"
         android:textStyle="bold"/>

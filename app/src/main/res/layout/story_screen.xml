@@ -85,7 +85,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_margin="8.0dip"
-        android:text="MAIN"
+        android:text="&lt;"
         android:textColor="@drawable/text_button"
         android:textSize="36.0sp"
         android:textStyle="bold"/>

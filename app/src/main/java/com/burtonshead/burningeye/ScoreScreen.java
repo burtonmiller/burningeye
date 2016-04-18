@@ -13,50 +13,62 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
 import com.burtonshead.burningeye.logic.HighScore;
-import java.util.Iterator;
-import java.util.Vector;
+
 import org.apache.commons.lang.StringUtils;
 
-public class ScoreScreen extends GameActivity {
+import java.util.Iterator;
+import java.util.Vector;
+
+public class ScoreScreen extends GameActivity
+{
     public static final String NEW_HIGH_SCORE_EXTRA = "new_hs_extra";
     private TextView mBackButton;
     private float mDensity;
     private TableLayout mScoreTable;
 
     /* renamed from: com.burtonshead.burningeye.ScoreScreen.1 */
-    class C00301 implements OnClickListener {
-        C00301() {
+    class C00301 implements OnClickListener
+    {
+        C00301()
+        {
         }
 
-        public void onClick(View v) {
+        public void onClick(View v)
+        {
             ScoreScreen.this.startActivity(new Intent(ScoreScreen.this.getApplicationContext(), MainScreen.class));
         }
     }
 
     /* renamed from: com.burtonshead.burningeye.ScoreScreen.2 */
-    class C00312 implements DialogInterface.OnClickListener {
+    class C00312 implements DialogInterface.OnClickListener
+    {
         private final /* synthetic */ HighScore val$hs;
         private final /* synthetic */ EditText val$textEntryView;
 
-        C00312(HighScore highScore, EditText editText) {
+        C00312(HighScore highScore, EditText editText)
+        {
             this.val$hs = highScore;
             this.val$textEntryView = editText;
         }
 
-        public void onClick(DialogInterface dialog, int whichButton) {
+        public void onClick(DialogInterface dialog, int whichButton)
+        {
             this.val$hs.name = this.val$textEntryView.getText().toString();
-            App app = App.mInstance;
+            App app = App.sApp;
             App.getSettings().addHighScore(this.val$hs);
             ScoreScreen.this.load();
         }
     }
 
-    public ScoreScreen() {
+    public ScoreScreen()
+    {
         this.mDensity = 1.0f;
     }
 
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.score_screen);
         init(R.drawable.score_bkg);
@@ -69,11 +81,12 @@ public class ScoreScreen extends GameActivity {
         this.mDensity = metrics.density;
     }
 
-    public void onResume() {
+    public void onResume()
+    {
         String str = NEW_HIGH_SCORE_EXTRA;
         super.onResume();
         showBkgImage(true);
-        App.mInstance.playBkgMusic();
+        App.sApp.playBkgMusic();
         load();
         Intent intent = getIntent();
         String str2 = NEW_HIGH_SCORE_EXTRA;
@@ -81,17 +94,20 @@ public class ScoreScreen extends GameActivity {
         intent = getIntent();
         str2 = NEW_HIGH_SCORE_EXTRA;
         intent.removeExtra(str);
-        if (newScore != -1) {
+        if (newScore != -1)
+        {
             processNewHighScore(newScore);
         }
     }
 
-    public void onNewIntent(Intent intent) {
+    public void onNewIntent(Intent intent)
+    {
         String str = NEW_HIGH_SCORE_EXTRA;
         super.onNewIntent(intent);
         String str2 = NEW_HIGH_SCORE_EXTRA;
         long score = intent.getLongExtra(str, -1);
-        if (score != -1) {
+        if (score != -1)
+        {
             Intent intent2 = getIntent();
             String str3 = NEW_HIGH_SCORE_EXTRA;
             intent2.removeExtra(str);
@@ -101,16 +117,19 @@ public class ScoreScreen extends GameActivity {
         }
     }
 
-    public void onPause() {
+    public void onPause()
+    {
         showBkgImage(false);
-        App.mInstance.pauseBkgMusic();
+        App.sApp.pauseBkgMusic();
         System.gc();
+        App.sApp.getSettings().store();
         super.onPause();
     }
 
-    private void load() {
+    private void load()
+    {
         this.mScoreTable.removeAllViews();
-        App app = App.mInstance;
+        App app = App.sApp;
         Vector<HighScore> highScores = App.getSettings().getHighScores();
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/white_rabbit.ttf");
         TableRow r = new TableRow(this);
@@ -129,9 +148,11 @@ public class ScoreScreen extends GameActivity {
         r.addView(nameHeader);
         r.addView(scoreHeader);
         this.mScoreTable.addView(r);
-        if (highScores != null) {
+        if (highScores != null)
+        {
             Iterator it = highScores.iterator();
-            while (it.hasNext()) {
+            while (it.hasNext())
+            {
                 HighScore s = (HighScore) it.next();
                 r = new TableRow(this);
                 TextView name = new TextView(this);
@@ -153,7 +174,8 @@ public class ScoreScreen extends GameActivity {
         }
     }
 
-    private void processNewHighScore(long score) {
+    private void processNewHighScore(long score)
+    {
         EditText textEntryView = (EditText) LayoutInflater.from(this).inflate(R.layout.edit_text, null);
         new Builder(this).setTitle("New High Score!").setView(textEntryView).setPositiveButton("Done", new C00312(new HighScore(score, StringUtils.EMPTY), textEntryView)).show();
     }

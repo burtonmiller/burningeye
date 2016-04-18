@@ -10,6 +10,8 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.Surface;
 
+import com.burtonshead.burningeye.R;
+
 import java.util.Vector;
 
 /**
@@ -57,11 +59,11 @@ public class TiltManager implements SensorEventListener
 
     public void onAccuracyChanged(Sensor sensor, int accuracy)
     {
-        Log.i("TiltManager", "OnAccuracyChanged = accuracy, sensor = " + sensor.getName());
+        //Log.i("TiltManager", "OnAccuracyChanged = accuracy, sensor = " + sensor.getName());
 
         if (accuracy ==  SensorManager.SENSOR_STATUS_UNRELIABLE)
         {
-            Log.i("TiltManager", "*** SENSOR_STATUS_UNRELIABLE ***");
+            //Log.i("TiltManager", "*** SENSOR_STATUS_UNRELIABLE ***");
 
             forceCalibration();
         }
@@ -70,13 +72,13 @@ public class TiltManager implements SensorEventListener
             switch (accuracy)
             {
                 case SensorManager.SENSOR_STATUS_ACCURACY_HIGH:
-                    Log.i("TiltManager", "*** SENSOR STATUS = HIGH");
+                    //Log.i("TiltManager", "*** SENSOR STATUS = HIGH");
                     break;
                 case SensorManager.SENSOR_STATUS_ACCURACY_LOW:
-                    Log.i("TiltManager", "*** SENSOR STATUS = LOW");
+                    //Log.i("TiltManager", "*** SENSOR STATUS = LOW");
                     break;
                 case SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM:
-                    Log.i("TiltManager", "*** SENSOR STATUS = MEDIUM");
+                    //Log.i("TiltManager", "*** SENSOR STATUS = MEDIUM");
                     break;
             }
 
@@ -127,7 +129,7 @@ public class TiltManager implements SensorEventListener
             else if (!isMagOK())
             {
                 // mag should always have good values
-                Log.i("GameLogic.onSensorChanged", "\n\n\n MAGNEMOMETER NULL \n\n\n");
+                //Log.i("GameLogic.onSensorChanged", "\n\n\n MAGNEMOMETER NULL \n\n\n");
 
                 mBadMagValues++;
 
@@ -240,8 +242,9 @@ public class TiltManager implements SensorEventListener
         // get user to calibrate device
         mDialog  = new AlertDialog.Builder(mActivity)
                 .setTitle("Tilt Calibration Required")
-                .setMessage("The tilt sensor is confused.  Rotate your device on all three axes, and that should fix it.")
-                .setPositiveButton("OK", listener)
+                //.setMessage("The tilt sensor is confused.  Rotate your device on all three axes, and that should fix it.  Keep turning the device until this message disappears")
+                .setView(R.layout.calibrate_img)
+                //.setPositiveButton("OK", listener)
                 .show();
     }
 

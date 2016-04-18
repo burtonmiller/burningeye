@@ -9,7 +9,7 @@ public class Properties {
     private int mGameType;
 
     public Properties() {
-        if (App.mInstance.getResources().getString(R.string.game_type).equals("full")) {
+        if (App.sApp.getResources().getString(R.string.game_type).equals("full")) {
             this.mGameType = FULL_VERSION;
         } else {
             this.mGameType = LITE_VERSION;

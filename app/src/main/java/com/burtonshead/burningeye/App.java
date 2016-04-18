@@ -5,12 +5,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.burtonshead.burningeye.gamespace.Eye;
 import com.burtonshead.burningeye.logic.Properties;
@@ -23,7 +21,7 @@ import java.util.Vector;
 public class App extends Application
 {
 
-    public static App mInstance;
+    public static App sApp;
 
     public static final float SCALE_CONSTANT = 0.44444444f;
     public static final float SCALE_TOLERANCE = 0.05f;
@@ -37,6 +35,7 @@ public class App extends Application
     private static float mScreenWidth = 0;
     private static float mScreenHeight = 0;
     private static float mScaleFactor = 1.0f;
+    private static float BASE_MUSIC_LEVEL = 0.4f;
 
     private static float mTargetBitmapDensity = 1.0f; // mScreenHeight / SCALE_CONSTANT;
 
@@ -44,16 +43,17 @@ public class App extends Application
     public void onCreate()
     {
         super.onCreate();
-        mInstance = this;
+        sApp = this;
         this.mProps = new Properties();
         this.mSettings = new Settings(this);
         this.mSettings.load();
         this.mBitmaps = new HashMap();
         this.mKeys = new HashMap();
         this.mExternalBitmaps = new HashMap();
-        this.mBkgMusic = MediaPlayer.create(this, R.raw.bkg_music_3);
+        this.mBkgMusic = MediaPlayer.create(this, R.raw.bkg_music_1);
         this.mBkgMusic.setLooping(true);
-        this.mBkgMusic.setVolume(Eye.SPEED_FAST, Eye.SPEED_FAST);
+        float musicLevel = BASE_MUSIC_LEVEL * (getSettings().getMusicLevel() * 10);
+        this.mBkgMusic.setVolume(musicLevel, musicLevel);
         this.mProps.getGameType();
 
         // setup screen dims for scaling
@@ -91,12 +91,12 @@ public class App extends Application
 
     public static Properties getProps()
     {
-        return mInstance.mProps;
+        return sApp.mProps;
     }
 
     public static Settings getSettings()
     {
-        return mInstance.mSettings;
+        return sApp.mSettings;
     }
 
     public static float getScreenWidth()
@@ -230,8 +230,15 @@ public class App extends Application
         }
     }
 
+    public synchronized void syncBkgMusicVolume()
+    {
+        float musicLevel = Math.max(0.01f, (BASE_MUSIC_LEVEL * getSettings().getMusicLevel()) / 10);
+        this.mBkgMusic.setVolume(musicLevel, musicLevel);
+    }
+
     public synchronized void playBkgMusic()
     {
+        syncBkgMusicVolume();
         this.mBkgMusic.start();
     }
 

@@ -36,7 +36,7 @@ public class StoryScreen extends GameActivity {
 
     public void onPause() {
         showBkgImage(false);
-        App.mInstance.pauseBkgMusic();
+        App.sApp.pauseBkgMusic();
         System.gc();
         super.onPause();
     }
@@ -44,7 +44,7 @@ public class StoryScreen extends GameActivity {
     public void onResume() {
         super.onResume();
         showBkgImage(true);
-        App.mInstance.playBkgMusic();
+        App.sApp.playBkgMusic();
         ((ScrollView) findViewById(R.id.scroller)).scrollTo(0, 0);
     }
 }

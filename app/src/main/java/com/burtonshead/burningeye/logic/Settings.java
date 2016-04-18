@@ -15,8 +15,16 @@ import org.json.JSONObject;
 public class Settings {
     private static final String HIGH_SCORES = "high_scores";
     private static final String PREFS = "burning_eye_prefs";
-    private Vector<HighScore> mHighScores;
+    private static final String MUSIC_LEVEL = "music_level";
+    private static final String FX_LEVEL = "fx_level";
+
+    private static final int DEFAULT_LEVEL = 5;
+
     private SharedPreferences mPrefs;
+    private Vector<HighScore> mHighScores;
+    private int mMusicLevel = DEFAULT_LEVEL;
+    private int mFXLevel = DEFAULT_LEVEL;
+
 
     /* renamed from: com.burtonshead.burningeye.logic.Settings.1 */
     class scoreComparator implements Comparator<HighScore>
@@ -40,6 +48,27 @@ public class Settings {
         this.mPrefs = c.getSharedPreferences(PREFS, 0);
     }
 
+    public int getMusicLevel()
+    {
+        return mMusicLevel;
+    }
+
+    public void setMusicLevel(int level)
+    {
+        mMusicLevel = level;
+    }
+
+    public int getFXLevel()
+    {
+        return mFXLevel;
+    }
+
+    public void setFXLevel(int level)
+    {
+        mFXLevel = level;
+    }
+
+
     public Vector<HighScore> getHighScores() {
         return (Vector) this.mHighScores.clone();
     }
@@ -56,6 +85,9 @@ public class Settings {
     public void load() {
         clear();
         try {
+            mMusicLevel = mPrefs.getInt(MUSIC_LEVEL, DEFAULT_LEVEL);
+            mFXLevel = mPrefs.getInt(FX_LEVEL, DEFAULT_LEVEL);
+
             String scores = this.mPrefs.getString(HIGH_SCORES, null);
             if (scores != null) {
                 JSONArray scoreList = new JSONArray(scores);
@@ -90,6 +122,8 @@ public class Settings {
                 scoreList.put(hs);
             }
             Editor editor = this.mPrefs.edit();
+            editor.putInt(MUSIC_LEVEL, mMusicLevel);
+            editor.putInt(FX_LEVEL, mFXLevel);
             editor.putString(HIGH_SCORES, scoreList.toString());
             editor.commit();
         } catch (Exception e) {

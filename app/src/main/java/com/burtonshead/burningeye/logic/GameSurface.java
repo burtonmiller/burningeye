@@ -10,7 +10,6 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
@@ -183,9 +182,9 @@ public class GameSurface extends SurfaceView implements Callback
     {
         if (this.mBkgBitmap != null)
         {
-            App.mInstance.releaseBitmap(this.mBkgBitmap);
+            App.sApp.releaseBitmap(this.mBkgBitmap);
         }
-        this.mBkgBitmap = App.mInstance.getBitmap(resID);
+        this.mBkgBitmap = App.sApp.getBitmap(resID);
     }
 
     public void setMapImg(Bitmap b)
@@ -246,18 +245,18 @@ public class GameSurface extends SurfaceView implements Callback
         this.mShadowPaint = new Paint();
         this.mShadowPaint.setColor(805306368);
         this.mEye = GameLogic.mInstance.getEye();
-        this.mBkgBitmap = App.mInstance.getBitmap(R.drawable.map_1);
+        this.mBkgBitmap = App.sApp.getBitmap(R.drawable.map_1);
         this.mMapXOffset = (float) ((-(this.mBkgBitmap.getWidth() - this.mMetrics.widthPixels)) / 2);
         this.mMapYOffset = (float) ((-(this.mBkgBitmap.getHeight() - this.mMetrics.heightPixels)) / 2);
         this.mEyeBitmap = this.mEye.getEyeBitmap();
-        this.mSlowPowerupBitmap = App.mInstance.getBitmap(R.drawable.slow_bkg);
+        this.mSlowPowerupBitmap = App.sApp.getBitmap(R.drawable.slow_bkg);
         this.mBeamMatrix = new Matrix();
         this.mScaleMatrix = new Matrix();
         this.mOffsetMatrix = new Matrix();
-        Bitmap cityBitmap = App.mInstance.getBitmap(R.drawable.city_100);
+        Bitmap cityBitmap = App.sApp.getBitmap(R.drawable.city_100);
         this.mCityOffsetX = (float) (cityBitmap.getWidth() / 2);
         this.mCityOffsetY = (float) (cityBitmap.getHeight() / 2);
-        this.mEyeOverlay = App.mInstance.getBitmap(R.drawable.eye_overlay);
+        this.mEyeOverlay = App.sApp.getBitmap(R.drawable.eye_overlay);
         this.mXEyeOverlayPos = (float) ((this.mMetrics.widthPixels - this.mEyeOverlay.getWidth()) / 2);
         this.mYEyeOverlayPos = (float) ((this.mMetrics.heightPixels - this.mEyeOverlay.getHeight()) / 2);
         loadBeamBitmaps();
@@ -379,7 +378,7 @@ public class GameSurface extends SurfaceView implements Callback
         int beamWidth = mBeamBitmaps[beamIndex].getWidth();
         int newBeamHeight = (int) (mEye.mRadius * 2);
         int newBeamWidth = (int) Math.max(1, a);
-        Log.i("GameSurface", "drawEyeBeam: w = " + beamWidth + ", h = " + beamHeight + ", nw = " + newBeamWidth + ", nh = " + newBeamHeight);
+        //Log.i("GameSurface", "drawEyeBeam: w = " + beamWidth + ", h = " + beamHeight + ", nw = " + newBeamWidth + ", nh = " + newBeamHeight);
         if (beamWidth != newBeamWidth || beamHeight != newBeamHeight)
         {
             Bitmap resizedBitmap = Bitmap.createScaledBitmap

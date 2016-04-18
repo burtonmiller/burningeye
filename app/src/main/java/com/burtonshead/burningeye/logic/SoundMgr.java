@@ -4,6 +4,8 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 
+import com.burtonshead.burningeye.App;
+
 import java.util.HashMap;
 
 /**
@@ -19,6 +21,8 @@ class SoundMgr
     private HashMap<Integer, Float> mSoundVol;
 
     private Context mContext;
+
+    private float mFXLevel = 1.0f;
 
     public SoundMgr(Context c)
     {
@@ -41,6 +45,7 @@ class SoundMgr
     {
         int id = mSoundMap.get(resID);
         float vol = mSoundVol.get(id);
+        vol = (vol * App.sApp.getSettings().getFXLevel()) / 10; // modify level from fxlevel settings
         mSoundPool.play(id, vol, vol, GameLogic.STATE_RESUME, GameLogic.STATE_NEW, 1.0f);
     }
 
@@ -48,6 +53,7 @@ class SoundMgr
     {
         MediaPlayer m = MediaPlayer.create(mContext, resID);
         m.setLooping(true);
+        vol = (vol * App.sApp.getSettings().getFXLevel()) / 10; // modify level from fxlevel settings
         m.setVolume(vol, vol);
         mLoops.put(resID, m);
     }

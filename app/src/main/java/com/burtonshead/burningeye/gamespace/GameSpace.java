@@ -179,7 +179,7 @@ public class GameSpace
         Iterator it = this.mCities.iterator();
         while (it.hasNext())
         {
-            ((City) it.next()).restoreHP();
+            ((City) it.next()).restoreSomeHP();
         }
     }
 
@@ -413,8 +413,28 @@ public class GameSpace
 
     void randomLocation(FPoint p, float radius)
     {
-        p.x = (float) ((Math.random() * ((double) (this.mWidth - ((radius) * Eye.X_TOLERANCE)))) + ((double) radius));
-        p.y = (float) ((Math.random() * ((double) (this.mHeight - ((radius * 3) * Eye.Y_TOLERANCE)))) + ((double) radius)); //??? radius * 3
+        p.x = (float) ((Math.random() * ((double) (this.mWidth - ((radius) * 2)))) + ((double) radius));
+        p.y = (float) ((Math.random() * ((double) (this.mHeight - ((radius * 3) * 2)))) + ((double) radius)); //??? radius * 3
+    }
+
+    void randomLocationClosing(FPoint p, float radius)
+    {
+        // generate truly random location
+        randomLocation(p, radius);
+
+        // If few cities are left, then ships should get aim closer to the remaining cities
+        int left = mCities.size();
+        if (left <= 5)
+        {
+            City c = closestCity(p);
+            if (c == null)
+            {
+                return;
+            }
+
+            p.x = ((p.x * left)  + c.mPosition.x) / (left + 1);
+            p.y = ((p.y * left) + c.mPosition.y) / (left + 1);
+        }
     }
 
     static float distance(float x1, float y1, float r1, float x2, float y2, float r2)
@@ -425,5 +445,28 @@ public class GameSpace
     static boolean circleCollides(float x1, float y1, float r1, float x2, float y2, float r2)
     {
         return ((float) Math.sqrt(Math.pow((double) (x1 - x2), 2.0d) + Math.pow((double) (y1 - y2), 2.0d))) <= r1 + r2;
+    }
+
+    City closestCity(FPoint p)
+    {
+        float distance = 10000f;
+        City city = null;
+        if (this.mCities.size() == 0)
+        {
+            return null;
+        }
+        Iterator it = this.mCities.iterator();
+        while (it.hasNext())
+        {
+            City c = (City) it.next();
+            float d = distance(p.x, p.y, 75f, c.mPosition.x, c.mPosition.y, (float) c.mRadius);
+            if (d < distance)
+            {
+                city = c;
+                distance = d;
+            }
+        }
+
+        return city;
     }
 }

@@ -6,8 +6,6 @@ import com.burtonshead.burningeye.App;
 import com.burtonshead.burningeye.R;
 import com.burtonshead.burningeye.logic.GameLogic;
 
-import org.apache.commons.lang.time.FastDateFormat;
-
 public class City extends GameObject
 {
     private static final int BASE_HP = 15;
@@ -23,7 +21,12 @@ public class City extends GameObject
 
     public void restoreHP()
     {
-        this.mHP = 15.0f;
+        this.mHP = BASE_HP;
+    }
+
+    public void restoreSomeHP()
+    {
+        this.mHP = Math.min(BASE_HP, mHP + 5);
     }
 
     public Bitmap getBitmap()
@@ -31,15 +34,15 @@ public class City extends GameObject
         if (this.mBitmaps == null)
         {
             this.mBitmaps = new Bitmap[5];
-            this.mBitmaps[4] = App.mInstance.getBitmap(R.drawable.city_100);
-            this.mBitmaps[3] = App.mInstance.getBitmap(R.drawable.city_80);
-            this.mBitmaps[2] = App.mInstance.getBitmap(R.drawable.city_60);
-            this.mBitmaps[1] = App.mInstance.getBitmap(R.drawable.city_40);
-            this.mBitmaps[0] = App.mInstance.getBitmap(R.drawable.city_20);
+            this.mBitmaps[4] = App.sApp.getBitmap(R.drawable.city_100);
+            this.mBitmaps[3] = App.sApp.getBitmap(R.drawable.city_80);
+            this.mBitmaps[2] = App.sApp.getBitmap(R.drawable.city_60);
+            this.mBitmaps[1] = App.sApp.getBitmap(R.drawable.city_40);
+            this.mBitmaps[0] = App.sApp.getBitmap(R.drawable.city_20);
             this.mExpBitmaps = new Bitmap[3];
-            this.mExpBitmaps[0] = App.mInstance.getBitmap(R.drawable.city_exp_1);
-            this.mExpBitmaps[1] = App.mInstance.getBitmap(R.drawable.city_exp_2);
-            this.mExpBitmaps[2] = App.mInstance.getBitmap(R.drawable.city_exp_3);
+            this.mExpBitmaps[0] = App.sApp.getBitmap(R.drawable.city_exp_1);
+            this.mExpBitmaps[1] = App.sApp.getBitmap(R.drawable.city_exp_2);
+            this.mExpBitmaps[2] = App.sApp.getBitmap(R.drawable.city_exp_3);
         }
         float percent = Math.max(this.mHP, 0.0f) / 15.1f;
         switch (getState())

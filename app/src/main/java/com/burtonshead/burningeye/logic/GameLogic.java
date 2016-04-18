@@ -455,7 +455,7 @@ public class GameLogic implements TiltManager.TiltCalibrationListener
 
     public void onTiltFail()
     {
-        Log.i("GameLogic", "OnTiltFail - GameState = " + getGameState());
+        //Log.i("GameLogic", "OnTiltFail - GameState = " + getGameState());
 
         if (getGameState() == STATE_RESUME)
         {

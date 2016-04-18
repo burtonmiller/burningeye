@@ -10,8 +10,6 @@ import com.burtonshead.burningeye.powerup.Powerup;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.apache.commons.lang.time.FastDateFormat;
-
 public abstract class Saucer extends GameObject
 {
     protected Bitmap[] mAttackBitmaps;
@@ -91,7 +89,7 @@ public abstract class Saucer extends GameObject
         }
         if (this.mState == 20)
         {
-            return App.mInstance.getBitmap(R.drawable.empty_image);
+            return App.sApp.getBitmap(R.drawable.empty_image);
         }
         if (this.mState == 2)
         {
@@ -172,7 +170,7 @@ public abstract class Saucer extends GameObject
                 if (this.mHP > 0.0f)
                 {
                     setState(STATE_MOVE);
-                    mGameSpace.randomLocation(this.mDest, (float) this.mRadius);
+                    mGameSpace.randomLocationClosing(this.mDest, (float) this.mRadius);
                 }
                 break;
             case STATE_MOVE:
@@ -185,7 +183,7 @@ public abstract class Saucer extends GameObject
                         setState(STATE_ATTACK);
                         return;
                     }
-                    mGameSpace.randomLocation(this.mDest, (float) this.mRadius);
+                    mGameSpace.randomLocationClosing(this.mDest, (float) this.mRadius);
                     return;
                 }
                 calcNextPos();

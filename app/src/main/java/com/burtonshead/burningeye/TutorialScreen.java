@@ -119,13 +119,13 @@ public class TutorialScreen extends Activity {
     }
 
     public void onPause() {
-        App.mInstance.pauseBkgMusic();
+        App.sApp.pauseBkgMusic();
         System.gc();
         super.onPause();
     }
 
     public void onResume() {
         super.onResume();
-        App.mInstance.playBkgMusic();
+        App.sApp.playBkgMusic();
     }
 }

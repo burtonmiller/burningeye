@@ -116,40 +116,40 @@ public class Eye {
 
     public Bitmap[] getBeamBitmaps() {
         for (int i = BEAM_NORMAL; i < mBeamBitmaps.length; i += BEAM_SHOCK) {
-            App.mInstance.releaseBitmap(mBeamBitmaps[i]);
+            App.sApp.releaseBitmap(mBeamBitmaps[i]);
         }
         switch (mBeamType) {
             case BEAM_SHOCK /*1*/:
-                mBeamBitmaps[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.beam_yellow_1);
-                mBeamBitmaps[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.beam_yellow_2);
-                mBeamBitmaps[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.beam_yellow_3);
-                mBeamBitmaps[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.beam_yellow_4);
-                mBeamBitmaps[BEAM_WIDE] = App.mInstance.getBitmap(R.drawable.beam_yellow_5);
-                mBeamBitmaps[BEAM_XWIDE] = App.mInstance.getBitmap(R.drawable.beam_yellow_6);
+                mBeamBitmaps[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.beam_yellow_1);
+                mBeamBitmaps[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.beam_yellow_2);
+                mBeamBitmaps[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.beam_yellow_3);
+                mBeamBitmaps[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.beam_yellow_4);
+                mBeamBitmaps[BEAM_WIDE] = App.sApp.getBitmap(R.drawable.beam_yellow_5);
+                mBeamBitmaps[BEAM_XWIDE] = App.sApp.getBitmap(R.drawable.beam_yellow_6);
                 break;
             case BEAM_FIRE /*2*/:
-                mBeamBitmaps[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.beam_red_1);
-                mBeamBitmaps[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.beam_red_2);
-                mBeamBitmaps[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.beam_red_3);
-                mBeamBitmaps[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.beam_red_4);
-                mBeamBitmaps[BEAM_WIDE] = App.mInstance.getBitmap(R.drawable.beam_red_5);
-                mBeamBitmaps[BEAM_XWIDE] = App.mInstance.getBitmap(R.drawable.beam_red_6);
+                mBeamBitmaps[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.beam_red_1);
+                mBeamBitmaps[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.beam_red_2);
+                mBeamBitmaps[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.beam_red_3);
+                mBeamBitmaps[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.beam_red_4);
+                mBeamBitmaps[BEAM_WIDE] = App.sApp.getBitmap(R.drawable.beam_red_5);
+                mBeamBitmaps[BEAM_XWIDE] = App.sApp.getBitmap(R.drawable.beam_red_6);
                 break;
             case BEAM_BLACKHOLE /*3*/:
-                mBeamBitmaps[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.beam_black_1);
-                mBeamBitmaps[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.beam_black_2);
-                mBeamBitmaps[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.beam_black_3);
-                mBeamBitmaps[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.beam_black_4);
-                mBeamBitmaps[BEAM_WIDE] = App.mInstance.getBitmap(R.drawable.beam_black_5);
-                mBeamBitmaps[BEAM_XWIDE] = App.mInstance.getBitmap(R.drawable.beam_black_6);
+                mBeamBitmaps[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.beam_black_1);
+                mBeamBitmaps[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.beam_black_2);
+                mBeamBitmaps[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.beam_black_3);
+                mBeamBitmaps[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.beam_black_4);
+                mBeamBitmaps[BEAM_WIDE] = App.sApp.getBitmap(R.drawable.beam_black_5);
+                mBeamBitmaps[BEAM_XWIDE] = App.sApp.getBitmap(R.drawable.beam_black_6);
                 break;
             default:
-                mBeamBitmaps[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.beam_blue_1);
-                mBeamBitmaps[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.beam_blue_2);
-                mBeamBitmaps[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.beam_blue_3);
-                mBeamBitmaps[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.beam_blue_4);
-                mBeamBitmaps[BEAM_WIDE] = App.mInstance.getBitmap(R.drawable.beam_blue_5);
-                mBeamBitmaps[BEAM_XWIDE] = App.mInstance.getBitmap(R.drawable.beam_blue_6);
+                mBeamBitmaps[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.beam_blue_1);
+                mBeamBitmaps[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.beam_blue_2);
+                mBeamBitmaps[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.beam_blue_3);
+                mBeamBitmaps[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.beam_blue_4);
+                mBeamBitmaps[BEAM_WIDE] = App.sApp.getBitmap(R.drawable.beam_blue_5);
+                mBeamBitmaps[BEAM_XWIDE] = App.sApp.getBitmap(R.drawable.beam_blue_6);
                 break;
         }
         return mBeamBitmaps;
@@ -164,34 +164,34 @@ public class Eye {
         Bitmap[] temp = new Bitmap[BEAM_WIDE];
         switch (mBeamType) {
             case BEAM_SHOCK /*1*/:
-                temp[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.beam_focus_yellow_1);
-                temp[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.beam_focus_yellow_2);
-                temp[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.beam_focus_yellow_3);
-                temp[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.beam_focus_yellow_4);
+                temp[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.beam_focus_yellow_1);
+                temp[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.beam_focus_yellow_2);
+                temp[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.beam_focus_yellow_3);
+                temp[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.beam_focus_yellow_4);
                 break;
             case BEAM_FIRE /*2*/:
-                temp[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.beam_focus_red_1);
-                temp[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.beam_focus_red_2);
-                temp[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.beam_focus_red_3);
-                temp[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.beam_focus_red_4);
+                temp[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.beam_focus_red_1);
+                temp[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.beam_focus_red_2);
+                temp[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.beam_focus_red_3);
+                temp[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.beam_focus_red_4);
                 break;
             case BEAM_BLACKHOLE /*3*/:
-                temp[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.beam_focus_black_1);
-                temp[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.beam_focus_black_2);
-                temp[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.beam_focus_black_3);
-                temp[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.beam_focus_black_4);
+                temp[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.beam_focus_black_1);
+                temp[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.beam_focus_black_2);
+                temp[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.beam_focus_black_3);
+                temp[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.beam_focus_black_4);
                 break;
             default:
-                temp[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.beam_focus_blue_1);
-                temp[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.beam_focus_blue_2);
-                temp[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.beam_focus_blue_3);
-                temp[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.beam_focus_blue_4);
+                temp[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.beam_focus_blue_1);
+                temp[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.beam_focus_blue_2);
+                temp[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.beam_focus_blue_3);
+                temp[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.beam_focus_blue_4);
                 break;
         }
         int dim = (int) (mRadius * 4.0f);
         for (i = 0; i < temp.length; i++) {
             mFocusBitmaps[i] = Bitmap.createScaledBitmap(temp[i], dim, dim, true);
-            App.mInstance.releaseBitmap(temp[i]);
+            App.sApp.releaseBitmap(temp[i]);
         }
         for (i = 0; i < oldBitmaps.length; i++) {
             if (oldBitmaps[i] != null) {
@@ -212,33 +212,33 @@ public class Eye {
         }
         switch (mBeamType) {
             case BEAM_SHOCK /*1*/:
-                mEyeBitmaps[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.eye_yellow_1);
-                mEyeBitmaps[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.eye_yellow_2);
-                mEyeBitmaps[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.eye_yellow_3);
-                mEyeBitmaps[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.eye_yellow_4);
+                mEyeBitmaps[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.eye_yellow_1);
+                mEyeBitmaps[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.eye_yellow_2);
+                mEyeBitmaps[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.eye_yellow_3);
+                mEyeBitmaps[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.eye_yellow_4);
                 break;
             case BEAM_FIRE /*2*/:
-                mEyeBitmaps[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.eye_red_1);
-                mEyeBitmaps[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.eye_red_2);
-                mEyeBitmaps[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.eye_red_3);
-                mEyeBitmaps[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.eye_red_4);
+                mEyeBitmaps[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.eye_red_1);
+                mEyeBitmaps[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.eye_red_2);
+                mEyeBitmaps[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.eye_red_3);
+                mEyeBitmaps[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.eye_red_4);
                 break;
             case BEAM_BLACKHOLE /*3*/:
-                mEyeBitmaps[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.eye_black_1);
-                mEyeBitmaps[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.eye_black_2);
-                mEyeBitmaps[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.eye_black_3);
-                mEyeBitmaps[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.eye_black_4);
+                mEyeBitmaps[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.eye_black_1);
+                mEyeBitmaps[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.eye_black_2);
+                mEyeBitmaps[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.eye_black_3);
+                mEyeBitmaps[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.eye_black_4);
                 break;
             default:
-                mEyeBitmaps[BEAM_NORMAL] = App.mInstance.getBitmap(R.drawable.eye_blue_1);
-                mEyeBitmaps[BEAM_SHOCK] = App.mInstance.getBitmap(R.drawable.eye_blue_2);
-                mEyeBitmaps[BEAM_FIRE] = App.mInstance.getBitmap(R.drawable.eye_blue_3);
-                mEyeBitmaps[BEAM_BLACKHOLE] = App.mInstance.getBitmap(R.drawable.eye_blue_4);
+                mEyeBitmaps[BEAM_NORMAL] = App.sApp.getBitmap(R.drawable.eye_blue_1);
+                mEyeBitmaps[BEAM_SHOCK] = App.sApp.getBitmap(R.drawable.eye_blue_2);
+                mEyeBitmaps[BEAM_FIRE] = App.sApp.getBitmap(R.drawable.eye_blue_3);
+                mEyeBitmaps[BEAM_BLACKHOLE] = App.sApp.getBitmap(R.drawable.eye_blue_4);
                 break;
         }
         for (i = BEAM_NORMAL; i < temp.length; i += BEAM_SHOCK) {
             if (temp[i] != mEyeBitmaps[i]) {
-                App.mInstance.releaseBitmap(temp[i]);
+                App.sApp.releaseBitmap(temp[i]);
             }
         }
     }

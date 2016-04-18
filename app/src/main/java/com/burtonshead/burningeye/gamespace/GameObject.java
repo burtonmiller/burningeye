@@ -134,7 +134,7 @@ public abstract class GameObject {
     }
 
     public float getExplodePercentLeft() {
-        Log.i("***** GameObject.getExplodePercentLeft *****", "mTimeLeft = " + this.mTimeLeft);
+        //Log.i("***** GameObject.getExplodePercentLeft *****", "mTimeLeft = " + this.mTimeLeft);
         return ((float) this.mTimeLeft) / ((float) this.mExplodeTime);
     }
 

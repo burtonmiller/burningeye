@@ -35,7 +35,7 @@ public class SoundEffects {
     }
 
     public void play(int resid) {
-        Log.i("SoundEffects", "Playing: " + resid);
+        //Log.i("SoundEffects", "Playing: " + resid);
         int soundId = ((Integer) this.soundPoolMap.get(Integer.valueOf(resid))).intValue();
         this.soundPool.setLoop(soundId, 1);
         this.soundPool.play(soundId, this.volume, this.volume, 1, 0, 1.0f);

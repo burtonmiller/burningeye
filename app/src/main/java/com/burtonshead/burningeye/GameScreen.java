@@ -13,8 +13,6 @@ import com.burtonshead.burningeye.logic.GameLogic;
 import com.burtonshead.burningeye.logic.GameSurface;
 import com.burtonshead.burningeye.powerup.Powerup;
 import java.util.Vector;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang.time.FastDateFormat;
 
 public class GameScreen extends GameActivity {
     public static GameScreen mInstance;
@@ -163,7 +161,7 @@ public class GameScreen extends GameActivity {
             mGameLogic.setGameState(2);
         }
         mGameLogic.pauseSounds();
-        App.mInstance.pauseBkgMusic();
+        App.sApp.pauseBkgMusic();
         System.gc();
         super.onPause();
     }
@@ -171,7 +169,7 @@ public class GameScreen extends GameActivity {
     public void onResume() {
         super.onResume();
         showBkgImage(true);
-        App.mInstance.playBkgMusic();
+        App.sApp.playBkgMusic();
         mGameLogic.resumeSounds();
         mGameLogic.setMainThread();
         gameStateChanged();
@@ -183,7 +181,7 @@ public class GameScreen extends GameActivity {
             mGameLogic.cleanup();
         }
         mGameLogic = null;
-        App.mInstance.releaseAllBitmaps(false);
+        App.sApp.releaseAllBitmaps(false);
         System.gc();
         super.onStop();
     }
@@ -236,14 +234,14 @@ public class GameScreen extends GameActivity {
         switch (mGameLogic.getGameState()) {
             case GameLogic.STATE_RESUME:
                 showBkgImage(false);
-                App.mInstance.pauseBkgMusic();
+                App.sApp.pauseBkgMusic();
                 mGameSurface.setVisibility(View.VISIBLE);
                 mControls.setVisibility(View.GONE);
                 mLevelControls.setVisibility(View.GONE);
                 showPowerups(true);
                 break;
             case GameLogic.STATE_PAUSE:
-                App.mInstance.playBkgMusic();
+                App.sApp.playBkgMusic();
                 mControls.setVisibility(View.VISIBLE);
                 mPlayButton.setVisibility(View.GONE);
                 mResumeButton.setVisibility(View.VISIBLE);
@@ -252,7 +250,7 @@ public class GameScreen extends GameActivity {
                 showPowerups(false);
                 break;
             case GameLogic.STATE_OVER:
-                App.mInstance.playBkgMusic();
+                App.sApp.playBkgMusic();
                 mGameSurface.setVisibility(View.GONE);
                 mControls.setVisibility(View.VISIBLE);
                 mPlayButton.setVisibility(View.GONE); //???
@@ -267,7 +265,7 @@ public class GameScreen extends GameActivity {
                     finish();
                     break;
                 }
-                App.mInstance.pauseBkgMusic();
+                App.sApp.pauseBkgMusic();
                 mControls.setVisibility(View.GONE);
                 mLevelControls.setVisibility(View.VISIBLE);
                 mWaveText.setText("Wave " + mGameLogic.getWaveCount() + " Complete");

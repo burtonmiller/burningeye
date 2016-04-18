@@ -55,7 +55,7 @@ public class UpgradeScreen extends GameActivity {
 
     public void onPause() {
         showBkgImage(false);
-        App.mInstance.pauseBkgMusic();
+        App.sApp.pauseBkgMusic();
         System.gc();
         super.onPause();
     }
@@ -63,6 +63,6 @@ public class UpgradeScreen extends GameActivity {
     public void onResume() {
         super.onResume();
         showBkgImage(true);
-        App.mInstance.playBkgMusic();
+        App.sApp.playBkgMusic();
     }
 }

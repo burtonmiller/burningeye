@@ -9,6 +9,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
+    <uses-feature android:name="android.hardware.sensor.compass" android:required="true" />
+
+
     <!--android:largestWidthLimitDp="320"-->
 
     <supports-screens
@@ -17,9 +21,11 @@
         android:normalScreens="true"
         android:largeScreens="false"
         android:xlargeScreens="false"
+        android:largestWidthLimitDp="320"
     />
 
     <compatible-screens>
+
         <!-- all small size screens -->
         <screen android:screenSize="small" android:screenDensity="ldpi" />
         <screen android:screenSize="small" android:screenDensity="mdpi" />
@@ -40,7 +46,7 @@
         <activity
             android:name=".MainScreen"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
@@ -52,45 +58,51 @@
         <activity
             android:name=".GameScreen"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <activity
             android:name=".StoryScreen"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
+            android:label="Story"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <activity
             android:name=".TutorialScreen"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
+            android:label="Tutorial"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <activity
             android:name=".ScoreScreen"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
+            android:label="High Scores"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <activity
             android:name=".AboutScreen"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
+            android:label="About Burning Eye"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <activity
             android:name=".UpgradeScreen"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
+            android:label="Upgrade"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
+        <activity
+            android:name=".SettingsScreen"
+            android:label="Settings"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
     </application>
 

@@ -17,8 +17,9 @@
     <string name="tutorial_text_3">Tilt the device forward or back to move the beam up or down.</string>
     <string name="tutorial_text_4">Touch the powerups on the right, when you need them.</string>
     <string name="story_1">When the invasion began, humankind was woefully unprepared for the onslaught of alien destruction. The invasion fleet made no demands, and answered no hails, sending only pulsing beams of death. The saucers came in wave after wave, unstoppable by man-made technology. After the human population of Earth had been reduced to a tiny fraction of its billions...</string>
-    <string name="story_2">The technology of the ancients awoke from a slumber that had lasted untold millenia. Great swaths of earth boiled and churned at sites all over the globe. From each of these stony cauldrons emerged gargantuan, stony eyes, woven from the earth, itself. And as the eyes opened, they blasted forth a continous rain of burning energy beams that wrought havoc on the invaders.</string>
+    <string name="story_2">The technology of the ancients awoke from a slumber that had lasted untold millenia. Great swaths of earth boiled and churned at sites all over the globe. From each of these stony cauldrons emerged gargantuan, stony eyes, woven from the earth, itself. And as the eyes opened, they blasted forth a continuous rain of burning energy beams that wrought havoc on the invaders.</string>
     <string name="story_3">All that remains to be decided, is who will be victorious? Earth and her ancient, mysterious allies, or the ruthless invasion fleet...</string>
+    <string name="calibrate_text">The tilt sensor is confused.  Rotate your device on all three axes, and that should fix it.  Keep turning the device until this message disappears.</string>
     <string name="exit">EXIT</string>
     <string name="new_game">NEW GAME</string>
     <string name="resume">RESUME</string>
